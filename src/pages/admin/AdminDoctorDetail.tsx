@@ -10,3 +10,8 @@ import api from '../../services/api';
 import { Doctor, Schedule, Leave, DayOfWeek, Specialization } from '../../types/admin';
 
 const { Title } = Typography;
+
+const dayOptions = [
+    'MONDAY', 'TUESDAY', 'WEDNESDAY',
+    'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'
+].map(d => ({ label: d, value: d }));
