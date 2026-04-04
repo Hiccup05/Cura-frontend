@@ -78,6 +78,59 @@ const AdminServices = () => {
             .catch(() => message.error('Failed to toggle status'));
     };
 
+    const columns = [
+        {
+            title: 'ID',
+            dataIndex: 'id'
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name'
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            render: (price: number) => `NPR ${price}`
+        },
+        {
+            title: 'Duration',
+            dataIndex: 'durationMinutes',
+            render: (mins: number) => `${mins} mins`
+        },
+        {
+            title: 'Specialization',
+            dataIndex: 'specializationName'
+        },
+        {
+            title: 'Status',
+            dataIndex: 'isActive',
+            render: (isActive: boolean) => (
+                <Tag color={isActive ? 'green' : 'red'}>
+                    {isActive ? 'Active' : 'Inactive'}
+                </Tag>
+            )
+        },
+        {
+            title: 'Actions',
+            render: (_: any, record: MedicalService) => (
+                <div style={{ display: 'flex', gap: 8 }}>
+                    <Button
+                        icon={<EditOutlined />}
+                        size="small"
+                        onClick={() => openEditModal(record)}
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        size="small"
+                        onClick={() => toggleStatus(record.id)}
+                    >
+                        {record.isActive ? 'Deactivate' : 'Activate'}
+                    </Button>
+                </div>
+            )
+        }
+    ];
 
 };
 
