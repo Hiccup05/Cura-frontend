@@ -6,6 +6,7 @@ import PatientDashboard from './pages/PatientDashboard';
 import AdminLayout from './pages/AdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminOverview from './pages/admin/AdminOverview';
+import AdminProfile from './pages/admin/AdminProfile';
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
             <Route path="overview" element={<AdminOverview />} />
             <Route path="doctors" element={<div>Doctors coming soon</div>} />
             <Route path="receptionists" element={<div>Receptionists coming soon</div>} />
-            <Route path="profile" element={<div>Profile coming soon</div>} />
+            <Route path="profile" element={<AdminProfile />} />
           </Route>
         </Route>
 
