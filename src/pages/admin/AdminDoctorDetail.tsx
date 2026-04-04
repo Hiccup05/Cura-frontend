@@ -59,6 +59,25 @@ const AdminDoctorDetail = () => {
             .finally(() => setLoading(false));
     };
 
+    const openDoctorModal = () => {
+        doctorForm.setFieldsValue({
+            licenseNumber: doctor?.licenseNumber,
+            yearsOfExperience: doctor?.yearsOfExperience,
+            specializationIds: doctor?.specialization.map(s => s.id)
+        });
+        setDoctorModalOpen(true);
+    };
+
+    const handleDoctorUpdate = (values: any) => {
+        api.patch(`/admin/doctors/${id}`, values)
+            .then(() => {
+                message.success('Doctor updated');
+                setDoctorModalOpen(false);
+                fetchAll();
+            })
+            .catch(() => message.error('Failed to update doctor'));
+    };
+
 
 };
 
