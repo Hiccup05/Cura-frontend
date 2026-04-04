@@ -202,7 +202,18 @@ const AdminDoctorDetail = () => {
         }
     ];
 
+    return (
+        <div>
+            <Button
+                icon={<ArrowLeftOutlined />}
+                onClick={() => navigate('/admin/doctors')}
+                style={{ marginBottom: 24 }}
+            >
+                Back to Doctors
+            </Button>
 
+        </div>
+    );
 };
 
 export default AdminDoctorDetail;
