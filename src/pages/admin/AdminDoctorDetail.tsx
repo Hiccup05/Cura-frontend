@@ -242,6 +242,19 @@ const AdminDoctorDetail = () => {
                 <Table rowKey="id" dataSource={schedules} columns={scheduleColumns} pagination={false} />
             </Card>
 
+            {/* Leaves */}
+            <Card
+                title="Leaves"
+                extra={
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => setLeaveModalOpen(true)}>
+                        Add Leave
+                    </Button>
+                }
+            >
+                <Table rowKey="id" dataSource={leaves} columns={leaveColumns} pagination={false} />
+            </Card>
+
+
         </div>
     );
 };
