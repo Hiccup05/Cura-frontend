@@ -17,3 +17,18 @@ export interface PatientProfile {
     emergencyContactName: string
     emergencyContactPhone: string
 }
+
+interface PatientResponseDto {
+    id: number;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: string;
+    phoneNumber: string;
+    address: string;
+    bloodGroup: string;
+    allergies: string;
+    chronicConditions: string;
+    emergencyContactName: string;
+    emergencyContactPhone: string;
+}

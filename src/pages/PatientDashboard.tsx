@@ -2,23 +2,10 @@ import { useEffect, useState } from "react";
 import { Avatar, Card, Col, Row, Tag, Typography, Button, Spin, Divider } from "antd";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
 import api from "../services/api";
+import { PatientResponseDto } from "../types/patient";
 
 const { Title, Text } = Typography;
 
-interface PatientResponseDto {
-    id: number;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    gender: string;
-    phoneNumber: string;
-    address: string;
-    bloodGroup: string;
-    allergies: string;
-    chronicConditions: string;
-    emergencyContactName: string;
-    emergencyContactPhone: string;
-}
 
 const InfoRow = ({ label, value }: { label: string; value?: string }) => (
     <div style={{ marginBottom: 16 }}>
