@@ -6,7 +6,9 @@ import {
     UserOutlined,
     TeamOutlined,
     LogoutOutlined,
-    MedicineBoxOutlined
+    MedicineBoxOutlined,
+    AppstoreOutlined,
+    TagOutlined
 } from '@ant-design/icons'
 import { logout } from '../../services/authService'
 
@@ -35,6 +37,16 @@ const AdminLayout = () => {
             key: '/admin/receptionists',
             icon: <TeamOutlined />,
             label: 'Receptionists'
+        },
+        {
+            key: '/admin/services',        // new
+            icon: <AppstoreOutlined />,
+            label: 'Medical Services'
+        },
+        {
+            key: '/admin/specializations', // new
+            icon: <TagOutlined />,
+            label: 'Specializations'
         },
         {
             key: '/admin/profile',
