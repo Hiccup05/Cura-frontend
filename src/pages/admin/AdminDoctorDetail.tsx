@@ -298,6 +298,25 @@ const AdminDoctorDetail = () => {
                 </Form>
             </Modal>
 
+            <Modal
+                title="Add Leave"
+                open={leaveModalOpen}
+                onCancel={() => { setLeaveModalOpen(false); leaveForm.resetFields(); }}
+                footer={null}
+            >
+                <Form form={leaveForm} layout="vertical" onFinish={handleLeaveCreate}>
+                    <Form.Item label="Start Date" name="startDate" rules={[{ required: true }]}>
+                        <DatePicker style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item label="End Date" name="endDate" rules={[{ required: true }]}>
+                        <DatePicker style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item label="Reason" name="reason" rules={[{ required: true }]}>
+                        <Input.TextArea rows={3} />
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit" block>Create Leave</Button>
+                </Form>
+            </Modal>
         </div>
     );
 };
