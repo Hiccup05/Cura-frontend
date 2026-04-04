@@ -1,13 +1,10 @@
 import api from './api';
-import { LoginRequest, LoginResponse } from '../types/auth';
 
-export const login = async (data: LoginRequest): Promise<LoginResponse> => {
-    const response = await api.post<LoginResponse>('/auth/login', data);
-    return response.data;
+export const login = async (data: { username: string; password: string }) => {
+    await api.post('/auth/login', data);
 };
 
 export const logout = async () => {
-    await api.post('/auth/logout')
-    window.location.href = '/login'
-}
-
+    await api.post('/auth/logout');
+    window.location.href = '/login';
+};
