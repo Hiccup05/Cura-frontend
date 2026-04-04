@@ -37,6 +37,15 @@ const AdminSpecializations = () => {
             .catch(() => message.error('Failed to create specialization'))
             .finally(() => setCreating(false));
     };
+
+    const handleDelete = (id: number) => {
+        api.delete(`/admin/specialization/${id}`)
+            .then(() => {
+                message.success('Specialization deleted');
+                fetchSpecializations();
+            })
+            .catch(() => message.error('Failed to delete specialization'));
+    };
 };
 
 export default AdminSpecializations;
