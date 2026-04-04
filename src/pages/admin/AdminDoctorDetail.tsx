@@ -229,6 +229,19 @@ const AdminDoctorDetail = () => {
                 <p><strong>Specializations:</strong> {doctor?.specialization.map(s => <Tag key={s.id}>{s.name}</Tag>)}</p>
             </Card>
 
+            {/* Schedules */}
+            <Card
+                title="Schedules"
+                style={{ marginBottom: 24 }}
+                extra={
+                    <Button type="primary" icon={<PlusOutlined />} onClick={openCreateSchedule}>
+                        Add Schedule
+                    </Button>
+                }
+            >
+                <Table rowKey="id" dataSource={schedules} columns={scheduleColumns} pagination={false} />
+            </Card>
+
         </div>
     );
 };
