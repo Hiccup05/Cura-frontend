@@ -51,6 +51,25 @@ const AdminServices = () => {
         setModalOpen(true);
     };
 
+    const handleSubmit = (values: any) => {
+        setCreating(true);
+
+        const request = editingService
+            ? api.patch(`/admin/services/${editingService.id}`, values)
+            : api.post('/admin/services', values);
+
+        request
+            .then(() => {
+                message.success(editingService ? 'Service updated' : 'Service created');
+                setModalOpen(false);
+                form.resetFields();
+                fetchServices();
+            })
+            .catch(() => message.error('Failed to save service'))
+            .finally(() => setCreating(false));
+    };
+
+
 
 };
 
