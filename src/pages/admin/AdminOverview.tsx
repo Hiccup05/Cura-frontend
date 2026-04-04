@@ -12,11 +12,11 @@ import { AdminStats } from '../../types/auth';
 const { Title } = Typography;
 
 const AdminOverview = () => {
-    // stats starts as null — nothing loaded yet
+
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // runs once when component loads — fetches stats from backend
+
     useEffect(() => {
         api.get('/admin/stats')
             .then((response) => setStats(response.data))
@@ -28,9 +28,6 @@ const AdminOverview = () => {
         <div>
             <Title level={4} style={{ marginBottom: 24 }}>Overview</Title>
 
-            {/* Row and Col are Ant Design's grid system */}
-            {/* gutter = space between cards */}
-            {/* xs=24 means full width on mobile, sm=12 means half width, lg=6 means quarter width */}
             <Row gutter={[16, 16]}>
 
                 <Col xs={24} sm={12} lg={6}>
