@@ -95,7 +95,38 @@ const AdminDoctorDetail = () => {
         setScheduleModalOpen(true);
     };
 
+    const handleScheduleSubmit = (values: any) => {
+        const payload = {
+            dayOfWeek: values.dayOfWeek,
+            startTime: values.startTime.format('HH:mm:ss'),
+            endTime: values.endTime.format('HH:mm:ss'),
+            maxAppointments: values.maxAppointments
+        };
 
+        const request = editingSchedule
+            ? api.patch(`/admin/doctors/${id}/schedules/${editingSchedule.id}`, payload)
+            : api.post(`/admin/doctors/${id}/schedules`, payload);
+
+        request
+            .then(() => {
+                message.success(editingSchedule ? 'Schedule updated' : 'Schedule created');
+                setScheduleModalOpen(false);
+                scheduleForm.resetFields();
+                fetchAll();
+            })
+            .catch(() => message.error('Failed to save schedule'));
+    };
+
+    const deleteSchedule = (scheduleId: number) => {
+        api.delete(`/admin/doctors/${id}/schedules/${scheduleId}`)
+            .then(() => {
+                message.success('Schedule deleted');
+                fetchAll();
+            })
+            .catch(() => message.error('Failed to delete schedule'));
+    };
+
+    c
 };
 
 export default AdminDoctorDetail;
