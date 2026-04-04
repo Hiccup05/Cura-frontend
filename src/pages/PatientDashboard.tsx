@@ -7,6 +7,7 @@ import { PatientResponseDto } from "../types/patient";
 import { Form, Input, Select, DatePicker } from 'antd';
 import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { message } from "antd";
 
 const { Title, Text } = Typography;
 
@@ -92,9 +93,25 @@ const PatientDashboard = () => {
                             <Tag color="red">{patient.bloodGroup}</Tag>}
                         </Text>
                     </div>
-                    <Button icon={<EditOutlined />} type="default">
-                        Edit Profile
-                    </Button>
+                    {!isEditing ? (
+                        <Button icon={<EditOutlined />} onClick={handleEdit}>
+                            Edit Profile
+                        </Button>
+                    ) : (
+                        <div style={{ display: 'flex', gap: 8 }}>
+                            <Button
+                                icon={<SaveOutlined />}
+                                type="primary"
+                                loading={saving}
+                                onClick={() => form.submit()}
+                            >
+                                Save
+                            </Button>
+                            <Button icon={<CloseOutlined />} onClick={handleCancel}>
+                                Cancel
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </Card>
 
