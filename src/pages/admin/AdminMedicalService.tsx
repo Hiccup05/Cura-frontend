@@ -18,6 +18,7 @@ const AdminServices = () => {
     const [form] = Form.useForm();
 
 
+
     const fetchServices = () => {
         setLoading(true);
         api.get('/admin/services')
@@ -33,14 +34,13 @@ const AdminServices = () => {
     };
 
     const openCreateModal = () => {
-        setEditingService(null);  // null = create mode
+        setEditingService(null);
         form.resetFields();
         setModalOpen(true);
     };
 
     const openEditModal = (service: MedicalService) => {
-        setEditingService(service);  // set = edit mode
-        // pre-fill the form with existing values
+        setEditingService(service);
         form.setFieldsValue({
             name: service.name,
             price: service.price,
@@ -69,6 +69,14 @@ const AdminServices = () => {
             .finally(() => setCreating(false));
     };
 
+    const toggleStatus = (id: number) => {
+        api.patch(`/admin/services/${id}/status`)
+            .then(() => {
+                message.success('Status toggled');
+                fetchServices();
+            })
+            .catch(() => message.error('Failed to toggle status'));
+    };
 
 
 };
