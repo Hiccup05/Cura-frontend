@@ -35,3 +35,8 @@ export interface MedicalService {
     specializationId: number
     specializationName: string
 }
+
+export interface Specialization {
+    id: number
+    name: string
+}
