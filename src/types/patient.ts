@@ -18,7 +18,7 @@ export interface PatientProfile {
     emergencyContactPhone: string
 }
 
-interface PatientResponseDto {
+export interface PatientResponseDto {
     id: number;
     firstName: string;
     lastName: string;

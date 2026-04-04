@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Avatar, Card, Col, Row, Tag, Typography, Button, Spin, Divider } from "antd";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
 import api from "../services/api";
+import { PatientProfile } from "../types/patient";
 import { PatientResponseDto } from "../types/patient";
+import { Form, Input, Select, DatePicker } from 'antd';
+import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
@@ -17,8 +21,11 @@ const InfoRow = ({ label, value }: { label: string; value?: string }) => (
 );
 
 const PatientDashboard = () => {
-    const [patient, setPatient] = useState<PatientResponseDto | null>(null);
+    const [patient, setPatient] = useState<PatientProfile | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [form] = Form.useForm();
 
     useEffect(() => {
         api.get("/patients")
