@@ -143,8 +143,79 @@ const PatientDashboard = () => {
                 </Row>
             )}
 
-
-            );
+            {/* Edit Mode */}
+            {isEditing && (
+                <Form form={form} layout="vertical" onFinish={handleSave}>
+                    <Row gutter={24}>
+                        <Col xs={24} md={12}>
+                            <Card title="Personal Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
+                                <Form.Item label="First Name" name="firstName">
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item label="Last Name" name="lastName">
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item label="Date of Birth" name="dateOfBirth">
+                                    <DatePicker style={{ width: '100%' }} />
+                                </Form.Item>
+                                <Form.Item label="Gender" name="gender">
+                                    <Select options={[
+                                        { label: 'Male', value: 'MALE' },
+                                        { label: 'Female', value: 'FEMALE' },
+                                        { label: 'Other', value: 'OTHER' }
+                                    ]} />
+                                </Form.Item>
+                                <Form.Item label="Phone Number" name="phoneNumber">
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item label="Address" name="address">
+                                    <Input />
+                                </Form.Item>
+                            </Card>
+                        </Col>
+                        <Col xs={24} md={12}>
+                            <Card title="Medical Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
+                                <Form.Item label="Blood Group" name="bloodGroup">
+                                    <Select options={[
+                                        { label: 'A+', value: 'A_POSITIVE' },
+                                        { label: 'A-', value: 'A_NEGATIVE' },
+                                        { label: 'B+', value: 'B_POSITIVE' },
+                                        { label: 'B-', value: 'B_NEGATIVE' },
+                                        { label: 'O+', value: 'O_POSITIVE' },
+                                        { label: 'O-', value: 'O_NEGATIVE' },
+                                        { label: 'AB+', value: 'AB_POSITIVE' },
+                                        { label: 'AB-', value: 'AB_NEGATIVE' },
+                                    ]} />
+                                </Form.Item>
+                                <Form.Item label="Allergies" name="allergies">
+                                    <Input.TextArea rows={2} />
+                                </Form.Item>
+                                <Form.Item label="Chronic Conditions" name="chronicConditions">
+                                    <Input.TextArea rows={2} />
+                                </Form.Item>
+                            </Card>
+                        </Col>
+                        <Col xs={24}>
+                            <Card title="Emergency Contact" bordered={false} style={{ borderRadius: 16 }}>
+                                <Row gutter={24}>
+                                    <Col xs={24} md={12}>
+                                        <Form.Item label="Contact Name" name="emergencyContactName">
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={24} md={12}>
+                                        <Form.Item label="Contact Phone" name="emergencyContactPhone">
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Form>
+            )}
+        </div>
+    );
 };
 
-            export default PatientDashboard;
+export default PatientDashboard;
