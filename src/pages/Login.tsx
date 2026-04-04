@@ -18,7 +18,7 @@ const Login = () => {
             const decoded: any = jwtDecode(response.jwtToken);
             const role = decoded.authority[0].role;
 
-            if (role === 'ROLE_ADMIN') navigate('/admin/dashboard');
+            if (role === 'ROLE_ADMIN') navigate('/admin/overview');
             else if (role === 'ROLE_DOCTOR') navigate('/doctor/dashboard');
             else if (role === 'ROLE_PATIENT') navigate('/patient/dashboard');
             else navigate('/');

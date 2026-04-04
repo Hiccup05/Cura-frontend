@@ -8,22 +8,18 @@ import {
     LogoutOutlined,
     MedicineBoxOutlined
 } from '@ant-design/icons'
-import { logout } from '../../services/authService'
+import { logout } from '../services/authService'
 
 const { Header, Sider, Content } = Layout
 const { Title } = Typography
 
 const AdminLayout = () => {
-    // controls whether sidebar is collapsed or expanded
     const [collapsed, setCollapsed] = useState(false)
 
     const navigate = useNavigate()
 
-    // useLocation tells you what the current URL is
-    // we use it to highlight the active sidebar item
     const location = useLocation()
 
-    // each item has a key = the route it should go to
     const menuItems = [
         {
             key: '/admin/overview',
