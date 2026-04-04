@@ -11,6 +11,7 @@ import AdminDoctors from './pages/admin/AdminDoctors';
 import AdminReceptionists from './pages/admin/AdminReceptionists';
 import AdminSpecializations from './pages/admin/AdminSpecializations';
 import AdminMedicalService from './pages/admin/AdminMedicalService';
+import AdminDoctorDetail from './pages/admin/AdminDoctorDetail';
 function App() {
   return (
     <BrowserRouter>
@@ -30,6 +31,7 @@ function App() {
             <Route index element={<Navigate to="/admin/overview" replace />} />
             <Route path="overview" element={<AdminOverview />} />
             <Route path="doctors" element={<AdminDoctors />} />
+            <Route path="doctors/:id" element={<AdminDoctorDetail />} />
             <Route path="receptionists" element={<AdminReceptionists />} />
             <Route path="specializations" element={<AdminSpecializations />} />
             <Route path="services" element={<AdminMedicalService />} />
