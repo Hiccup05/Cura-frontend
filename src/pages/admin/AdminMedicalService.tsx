@@ -17,7 +17,10 @@ const AdminServices = () => {
 
     const [form] = Form.useForm();
 
-
+    useEffect(() => {
+        fetchServices();
+        fetchSpecializations();
+    }, []);
 
     const fetchServices = () => {
         setLoading(true);
