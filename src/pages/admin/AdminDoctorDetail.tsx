@@ -160,6 +160,48 @@ const AdminDoctorDetail = () => {
             .catch(() => message.error('Failed to delete leave'));
     };
 
+    const scheduleColumns = [
+        { title: 'Day', dataIndex: 'dayOfWeek' },
+        { title: 'Start', dataIndex: 'startTime' },
+        { title: 'End', dataIndex: 'endTime' },
+        { title: 'Max Appointments', dataIndex: 'maxAppointments' },
+        {
+            title: 'Available',
+            dataIndex: 'isAvailable',
+            render: (val: boolean) => <Tag color={val ? 'green' : 'red'}>{val ? 'Yes' : 'No'}</Tag>
+        },
+        {
+            title: 'Actions',
+            render: (_: any, record: Schedule) => (
+                <div style={{ display: 'flex', gap: 8 }}>
+                    <Button size="small" icon={<EditOutlined />} onClick={() => openEditSchedule(record)}>
+                        Edit
+                    </Button>
+                    <Button size="small" onClick={() => toggleSchedule(record.id)}>
+                        Toggle
+                    </Button>
+                    <Popconfirm title="Delete this schedule?" onConfirm={() => deleteSchedule(record.id)}>
+                        <Button danger size="small" icon={<DeleteOutlined />}>Delete</Button>
+                    </Popconfirm>
+                </div>
+            )
+        }
+    ];
+
+    const leaveColumns = [
+        { title: 'Start Date', dataIndex: 'startDate' },
+        { title: 'End Date', dataIndex: 'endDate' },
+        { title: 'Reason', dataIndex: 'reason' },
+        {
+            title: 'Actions',
+            render: (_: any, record: Leave) => (
+                <Popconfirm title="Delete this leave?" onConfirm={() => deleteLeave(record.id)}>
+                    <Button danger size="small" icon={<DeleteOutlined />}>Delete</Button>
+                </Popconfirm>
+            )
+        }
+    ];
+
 
 };
 
