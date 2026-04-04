@@ -136,6 +136,30 @@ const AdminDoctorDetail = () => {
     };
 
 
+    const handleLeaveCreate = (values: any) => {
+        api.post(`/admin/doctors/${id}/leave`, {
+            startDate: values.startDate.format('YYYY-MM-DD'),
+            endDate: values.endDate.format('YYYY-MM-DD'),
+            reason: values.reason
+        })
+            .then(() => {
+                message.success('Leave created');
+                setLeaveModalOpen(false);
+                leaveForm.resetFields();
+                fetchAll();
+            })
+            .catch(() => message.error('Failed to create leave'));
+    };
+
+    const deleteLeave = (leaveId: number) => {
+        api.delete(`/admin/doctors/${id}/leave/${leaveId}`)
+            .then(() => {
+                message.success('Leave deleted');
+                fetchAll();
+            })
+            .catch(() => message.error('Failed to delete leave'));
+    };
+
 
 };
 
