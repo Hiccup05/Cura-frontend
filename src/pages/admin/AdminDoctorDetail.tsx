@@ -254,6 +254,24 @@ const AdminDoctorDetail = () => {
                 <Table rowKey="id" dataSource={leaves} columns={leaveColumns} pagination={false} />
             </Card>
 
+            {/* Doctor Edit Modal */}
+            <Modal title="Update Doctor" open={doctorModalOpen} onCancel={() => setDoctorModalOpen(false)} footer={null}>
+                <Form form={doctorForm} layout="vertical" onFinish={handleDoctorUpdate}>
+                    <Form.Item label="License Number" name="licenseNumber">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Years of Experience" name="yearsOfExperience">
+                        <Input type="number" />
+                    </Form.Item>
+                    <Form.Item label="Specializations" name="specializationIds">
+                        <Select
+                            mode="multiple"
+                            options={specializations.map(s => ({ label: s.name, value: s.id }))}
+                        />
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit" block>Update</Button>
+                </Form>
+            </Modal>
 
         </div>
     );
