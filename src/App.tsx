@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import OAuthCallback from './pages/OAuthCallback';
-import PatientDashboard from './pages/PatientDashboard';
+import PatientDashboard from './pages/patient/PatientProfile';
 import AdminLayout from './pages/admin/AdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminOverview from './pages/admin/AdminOverview';

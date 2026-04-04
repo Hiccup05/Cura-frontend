@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Avatar, Card, Col, Row, Tag, Typography, Button, Spin, Form, Input, Select, DatePicker, message } from "antd";
 import { UserOutlined, EditOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
-import api from "../services/api";
-import { PatientProfile } from "../types/patient";
+import api from "../../services/api";
+import { PatientProfile } from "../../types/patient";
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
