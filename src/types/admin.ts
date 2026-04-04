@@ -40,3 +40,5 @@ export interface Specialization {
     id: number
     name: string
 }
+
+export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
