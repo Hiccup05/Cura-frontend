@@ -126,7 +126,17 @@ const AdminDoctorDetail = () => {
             .catch(() => message.error('Failed to delete schedule'));
     };
 
-    c
+    const toggleSchedule = (scheduleId: number) => {
+        api.patch(`/admin/doctors/${id}/schedules/${scheduleId}/toggle`)
+            .then(() => {
+                message.success('Schedule toggled');
+                fetchAll();
+            })
+            .catch(() => message.error('Failed to toggle schedule'));
+    };
+
+
+
 };
 
 export default AdminDoctorDetail;
