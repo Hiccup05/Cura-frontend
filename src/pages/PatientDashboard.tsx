@@ -33,6 +33,43 @@ const PatientDashboard = () => {
             .finally(() => setLoading(false));
     }, []);
 
+    const handleEdit = () => {
+        form.setFieldsValue({
+            firstName: patient?.firstName,
+            lastName: patient?.lastName,
+            dateOfBirth: patient?.dateOfBirth ? dayjs(patient.dateOfBirth) : null,
+            gender: patient?.gender,
+            phoneNumber: patient?.phoneNumber,
+            address: patient?.address,
+            bloodGroup: patient?.bloodGroup,
+            allergies: patient?.allergies,
+            chronicConditions: patient?.chronicConditions,
+            emergencyContactName: patient?.emergencyContactName,
+            emergencyContactPhone: patient?.emergencyContactPhone,
+        });
+        setIsEditing(true);
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+        form.resetFields();
+    };
+
+    const handleSave = (values: any) => {
+        setSaving(true);
+        api.patch('/patients', {
+            ...values,
+            dateOfBirth: values.dateOfBirth?.format('YYYY-MM-DD')
+        })
+            .then((response) => {
+                setPatient(response.data);
+                setIsEditing(false);
+                message.success('Profile updated');
+            })
+            .catch(() => message.error('Failed to update profile'))
+            .finally(() => setSaving(false));
+    };
+
     if (loading) return (
         <div style={{ display: "flex", justifyContent: "center", paddingTop: 100 }}>
             <Spin size="large" />
