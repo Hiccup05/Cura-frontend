@@ -5,6 +5,7 @@ import OAuthCallback from './pages/OAuthCallback';
 import PatientDashboard from './pages/PatientDashboard';
 import AdminLayout from './pages/AdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminOverview from './pages/admin/AdminOverview';
 
 function App() {
   return (
