@@ -8,7 +8,7 @@ import {
     LogoutOutlined,
     MedicineBoxOutlined
 } from '@ant-design/icons'
-import { logout } from '../services/authService'
+import { logout } from '../../services/authService'
 
 const { Header, Sider, Content } = Layout
 const { Title } = Typography
@@ -44,7 +44,7 @@ const AdminLayout = () => {
     ]
 
     const handleMenuClick = ({ key }: { key: string }) => {
-        navigate(key) // clicking a menu item navigates to that route
+        navigate(key)
     }
 
     const handleLogout = async () => {
@@ -78,7 +78,7 @@ const AdminLayout = () => {
                 {/* Navigation links */}
                 <Menu
                     mode="inline"
-                    selectedKeys={[location.pathname]} // highlights current page
+                    selectedKeys={[location.pathname]}
                     items={menuItems}
                     onClick={handleMenuClick}
                     style={{ borderRight: 0 }}

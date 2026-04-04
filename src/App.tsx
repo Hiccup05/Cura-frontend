@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import OAuthCallback from './pages/OAuthCallback';
 import PatientDashboard from './pages/PatientDashboard';
-import AdminLayout from './pages/AdminLayout';
+import AdminLayout from './pages/admin/AdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminOverview from './pages/admin/AdminOverview';
 import AdminProfile from './pages/admin/AdminProfile';
