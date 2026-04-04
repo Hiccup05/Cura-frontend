@@ -32,6 +32,25 @@ const AdminServices = () => {
             .catch(() => message.error('Failed to load specializations'));
     };
 
+    const openCreateModal = () => {
+        setEditingService(null);  // null = create mode
+        form.resetFields();
+        setModalOpen(true);
+    };
+
+    const openEditModal = (service: MedicalService) => {
+        setEditingService(service);  // set = edit mode
+        // pre-fill the form with existing values
+        form.setFieldsValue({
+            name: service.name,
+            price: service.price,
+            durationMinutes: service.durationMinutes,
+            description: service.description,
+            specializationId: service.specializationId
+        });
+        setModalOpen(true);
+    };
+
 
 };
 
