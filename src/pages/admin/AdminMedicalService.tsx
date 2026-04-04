@@ -132,6 +132,66 @@ const AdminServices = () => {
         }
     ];
 
+    return (
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+                <Title level={4} style={{ margin: 0 }}>Medical Services</Title>
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={openCreateModal}
+                >
+                    Add Service
+                </Button>
+            </div>
+
+            <Table
+                rowKey="id"
+                loading={loading}
+                dataSource={services}
+                columns={columns}
+                pagination={{ pageSize: 10 }}
+            />
+
+            {/* Create / Edit Modal — same form for both */}
+            <Modal
+                title={editingService ? 'Edit Service' : 'Add Service'}
+                open={modalOpen}
+                onCancel={() => {
+                    setModalOpen(false);
+                    form.resetFields();
+                }}
+                footer={null}
+            >
+                <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                    <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Price (NPR)" name="price" rules={[{ required: true }]}>
+                        <Input type="number" />
+                    </Form.Item>
+                    <Form.Item label="Duration (minutes)" name="durationMinutes" rules={[{ required: true }]}>
+                        <Input type="number" />
+                    </Form.Item>
+                    <Form.Item label="Description" name="description">
+                        <Input.TextArea rows={3} />
+                    </Form.Item>
+                    <Form.Item label="Specialization" name="specializationId" rules={[{ required: true }]}>
+                        <Select
+                            placeholder="Select specialization"
+                            options={specializations.map(s => ({
+                                label: s.name,
+                                value: s.id
+                            }))}
+                        />
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit" loading={creating} block>
+                        {editingService ? 'Update' : 'Create'}
+                    </Button>
+                </Form>
+            </Modal>
+        </div>
+    );
 };
 
 export default AdminServices;
