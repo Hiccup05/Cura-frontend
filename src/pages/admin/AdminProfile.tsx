@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Col, Row, Statistic, Typography } from 'antd';
 import api from '../../services/api';
 import { AdminProfile as AdminProfileData } from '../../types/auth';
 
 const { Title } = Typography;
 
-const Profile = () => {
+const AdminProfile: React.FC = () => {
 
     const [stats, setStats] = useState<AdminProfileData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -43,4 +43,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default AdminProfile;
