@@ -9,6 +9,7 @@ import AdminOverview from './pages/admin/AdminOverview';
 import AdminProfile from './pages/admin/AdminProfile';
 import AdminDoctors from './pages/admin/AdminDoctors';
 import AdminReceptionists from './pages/admin/AdminReceptionists';
+import AdminSpecializations from './pages/admin/AdminSpecializations';
 function App() {
   return (
     <BrowserRouter>
@@ -29,6 +30,7 @@ function App() {
             <Route path="overview" element={<AdminOverview />} />
             <Route path="doctors" element={<AdminDoctors />} />
             <Route path="receptionists" element={<AdminReceptionists />} />
+            <Route path="specializations" element={<AdminSpecializations />} />
             <Route path="profile" element={<AdminProfile />} />
           </Route>
         </Route>
