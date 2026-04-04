@@ -212,6 +212,23 @@ const AdminDoctorDetail = () => {
                 Back to Doctors
             </Button>
 
+            {/* Doctor Info Card */}
+            <Card
+                loading={loading}
+                style={{ marginBottom: 24 }}
+                title={`${doctor?.firstName ?? ''} ${doctor?.lastName ?? ''}`.trim() || 'Doctor'}
+                extra={
+                    <Button icon={<EditOutlined />} onClick={openDoctorModal}>
+                        Edit
+                    </Button>
+                }
+            >
+                <p><strong>License:</strong> {doctor?.licenseNumber}</p>
+                <p><strong>Experience:</strong> {doctor?.yearsOfExperience} years</p>
+                <p><strong>Status:</strong> <Tag>{doctor?.doctorStatus}</Tag></p>
+                <p><strong>Specializations:</strong> {doctor?.specialization.map(s => <Tag key={s.id}>{s.name}</Tag>)}</p>
+            </Card>
+
         </div>
     );
 };
