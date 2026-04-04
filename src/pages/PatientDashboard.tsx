@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
-import { Avatar, Card, Col, Row, Tag, Typography, Button, Spin, Divider } from "antd";
-import { UserOutlined, EditOutlined } from "@ant-design/icons";
+import { Avatar, Card, Col, Row, Tag, Typography, Button, Spin, Form, Input, Select, DatePicker, message } from "antd";
+import { UserOutlined, EditOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
 import api from "../services/api";
 import { PatientProfile } from "../types/patient";
-import { PatientResponseDto } from "../types/patient";
-import { Form, Input, Select, DatePicker } from 'antd';
-import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { message } from "antd";
 
 const { Title, Text } = Typography;
 
@@ -115,38 +111,40 @@ const PatientDashboard = () => {
                 </div>
             </Card>
 
-            <Row gutter={24}>
-                <Col xs={24} md={12}>
-                    <Card title="Personal Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
-                        <InfoRow label="Date of Birth" value={patient?.dateOfBirth} />
-                        <InfoRow label="Phone Number" value={patient?.phoneNumber} />
-                        <InfoRow label="Address" value={patient?.address} />
-                    </Card>
-                </Col>
+            {/* View Mode */}
+            {!isEditing && (
+                <Row gutter={24}>
+                    <Col xs={24} md={12}>
+                        <Card title="Personal Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
+                            <InfoRow label="Date of Birth" value={patient?.dateOfBirth} />
+                            <InfoRow label="Phone Number" value={patient?.phoneNumber} />
+                            <InfoRow label="Address" value={patient?.address} />
+                        </Card>
+                    </Col>
+                    <Col xs={24} md={12}>
+                        <Card title="Medical Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
+                            <InfoRow label="Blood Group" value={patient?.bloodGroup} />
+                            <InfoRow label="Allergies" value={patient?.allergies} />
+                            <InfoRow label="Chronic Conditions" value={patient?.chronicConditions} />
+                        </Card>
+                    </Col>
+                    <Col xs={24}>
+                        <Card title="Emergency Contact" bordered={false} style={{ borderRadius: 16 }}>
+                            <Row gutter={24}>
+                                <Col xs={24} md={12}>
+                                    <InfoRow label="Contact Name" value={patient?.emergencyContactName} />
+                                </Col>
+                                <Col xs={24} md={12}>
+                                    <InfoRow label="Contact Phone" value={patient?.emergencyContactPhone} />
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Col>
+                </Row>
+            )}
 
-                <Col xs={24} md={12}>
-                    <Card title="Medical Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
-                        <InfoRow label="Blood Group" value={patient?.bloodGroup} />
-                        <InfoRow label="Allergies" value={patient?.allergies} />
-                        <InfoRow label="Chronic Conditions" value={patient?.chronicConditions} />
-                    </Card>
-                </Col>
 
-                <Col xs={24}>
-                    <Card title="Emergency Contact" bordered={false} style={{ borderRadius: 16 }}>
-                        <Row gutter={24}>
-                            <Col xs={24} md={12}>
-                                <InfoRow label="Contact Name" value={patient?.emergencyContactName} />
-                            </Col>
-                            <Col xs={24} md={12}>
-                                <InfoRow label="Contact Phone" value={patient?.emergencyContactPhone} />
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
-            </Row>
-        </div>
-    );
+            );
 };
 
-export default PatientDashboard;
+            export default PatientDashboard;
