@@ -53,3 +53,11 @@ export interface Schedule {
     maxAppointments: number
     isAvailable: boolean
 }
+
+export interface Leave {
+    id: number
+    startDate: string
+    endDate: string
+    reason: string
+    DoctorId: number
+}
