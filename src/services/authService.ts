@@ -6,3 +6,8 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
     return response.data;
 };
 
+export const logout = async () => {
+    await api.post('/auth/logout')
+    window.location.href = '/login'
+}
+
