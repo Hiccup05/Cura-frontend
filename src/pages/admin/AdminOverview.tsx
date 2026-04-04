@@ -7,17 +7,9 @@ import {
     DollarOutlined
 } from '@ant-design/icons';
 import api from '../../services/api';
+import { AdminStats } from '../../types/auth';
 
 const { Title } = Typography;
-
-// shape of what /admin/stats returns
-interface AdminStats {
-    totalDoctors: number;
-    totalPatients: number;
-    totalAppointments: number;
-    pendingDoctorApprovals: number;
-    totalRevenue: number;
-}
 
 const AdminOverview = () => {
     // stats starts as null — nothing loaded yet
