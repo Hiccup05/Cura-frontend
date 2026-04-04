@@ -24,3 +24,14 @@ export interface Receptionist {
     phoneNumber: string
     status: ReceptionistStatus
 }
+
+export interface MedicalService {
+    id: number
+    name: string
+    price: number
+    durationMinutes: number
+    description: string
+    isActive: boolean
+    specializationId: number
+    specializationName: string
+}
