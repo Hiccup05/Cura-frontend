@@ -42,3 +42,14 @@ export interface Specialization {
 }
 
 export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+
+export interface Schedule {
+    id: number
+    doctorId: number
+    doctorName: string
+    dayOfWeek: DayOfWeek
+    startTime: string
+    endTime: string
+    maxAppointments: number
+    isAvailable: boolean
+}
