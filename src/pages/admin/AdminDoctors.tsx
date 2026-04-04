@@ -9,8 +9,7 @@ const { Title } = Typography;
 const statusColors: Record<DoctorStatus, string> = {
     ACTIVE: 'green',
     INACTIVE: 'red',
-    ON_LEAVE: 'orange',
-    PENDING: 'gold'
+    ON_LEAVE: 'orange'
 };
 
 const AdminDoctors = () => {
@@ -33,7 +32,7 @@ const AdminDoctors = () => {
         api.patch(`/admin/doctors/${id}/status`, { doctorStatus: status })
             .then(() => {
                 message.success('Doctor status updated');
-                fetchDoctors(); // refresh the list
+                fetchDoctors();
             })
             .catch(() => message.error('Failed to update status'));
     };
@@ -45,8 +44,6 @@ const AdminDoctors = () => {
         },
         {
             title: 'Name',
-            // render lets you customize what shows in the cell
-            // instead of showing one field, we combine firstName + lastName
             render: (_: any, record: Doctor) =>
                 `${record.firstName ?? ''} ${record.lastName ?? ''}`.trim() || '—'
         },
@@ -82,7 +79,6 @@ const AdminDoctors = () => {
                         { label: 'Active', value: 'ACTIVE' },
                         { label: 'Inactive', value: 'INACTIVE' },
                         { label: 'On Leave', value: 'ON_LEAVE' },
-                        { label: 'Pending', value: 'PENDING' },
                     ]}
                 />
             )
@@ -93,7 +89,7 @@ const AdminDoctors = () => {
         <div>
             <Title level={4} style={{ marginBottom: 24 }}>Doctors</Title>
             <Table
-                rowKey="id"        // which field uniquely identifies each row
+                rowKey="id"
                 loading={loading}
                 dataSource={doctors}
                 columns={columns}
