@@ -3,7 +3,7 @@ export interface Specialization {
     name: string
 }
 
-export type DoctorStatus = 'ACTIVE' | 'INACTIVE' | 'ON_LEAVE' | 'PENDING'
+export type DoctorStatus = 'ACTIVE' | 'INACTIVE' | 'ON_LEAVE'
 
 export interface Doctor {
     id: number
@@ -13,4 +13,14 @@ export interface Doctor {
     yearsOfExperience: number
     licenseNumber: string
     doctorStatus: DoctorStatus
+}
+
+export type ReceptionistStatus = 'ACTIVE' | 'INACTIVE'
+
+export interface Receptionist {
+    id: number
+    firstName: string
+    lastName: string
+    phoneNumber: string
+    status: ReceptionistStatus
 }
