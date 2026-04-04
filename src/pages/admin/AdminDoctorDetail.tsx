@@ -273,6 +273,31 @@ const AdminDoctorDetail = () => {
                 </Form>
             </Modal>
 
+            <Modal
+                title={editingSchedule ? 'Edit Schedule' : 'Add Schedule'}
+                open={scheduleModalOpen}
+                onCancel={() => { setScheduleModalOpen(false); scheduleForm.resetFields(); }}
+                footer={null}
+            >
+                <Form form={scheduleForm} layout="vertical" onFinish={handleScheduleSubmit}>
+                    <Form.Item label="Day" name="dayOfWeek" rules={[{ required: true }]}>
+                        <Select options={dayOptions} />
+                    </Form.Item>
+                    <Form.Item label="Start Time" name="startTime" rules={[{ required: true }]}>
+                        <TimePicker format="HH:mm" style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item label="End Time" name="endTime" rules={[{ required: true }]}>
+                        <TimePicker format="HH:mm" style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item label="Max Appointments" name="maxAppointments" rules={[{ required: true }]}>
+                        <Input type="number" />
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit" block>
+                        {editingSchedule ? 'Update' : 'Create'}
+                    </Button>
+                </Form>
+            </Modal>
+
         </div>
     );
 };
