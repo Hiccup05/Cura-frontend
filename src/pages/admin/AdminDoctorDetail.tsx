@@ -78,6 +78,23 @@ const AdminDoctorDetail = () => {
             .catch(() => message.error('Failed to update doctor'));
     };
 
+    const openCreateSchedule = () => {
+        setEditingSchedule(null);
+        scheduleForm.resetFields();
+        setScheduleModalOpen(true);
+    };
+
+    const openEditSchedule = (schedule: Schedule) => {
+        setEditingSchedule(schedule);
+        scheduleForm.setFieldsValue({
+            dayOfWeek: schedule.dayOfWeek,
+            startTime: dayjs(schedule.startTime, 'HH:mm:ss'),
+            endTime: dayjs(schedule.endTime, 'HH:mm:ss'),
+            maxAppointments: schedule.maxAppointments
+        });
+        setScheduleModalOpen(true);
+    };
+
 
 };
 
