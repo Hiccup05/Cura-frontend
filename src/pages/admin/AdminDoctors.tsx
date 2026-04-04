@@ -3,6 +3,7 @@ import { Table, Tag, Button, Select, Typography, message, Modal, Form, Input } f
 import { PlusOutlined } from '@ant-design/icons';
 import api from '../../services/api';
 import { Doctor, DoctorStatus, Specialization } from '../../types/admin';
+import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 
@@ -19,6 +20,7 @@ const AdminDoctors = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [creating, setCreating] = useState(false);
     const [form] = Form.useForm();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchDoctors();
@@ -110,6 +112,14 @@ const AdminDoctors = () => {
                         { label: 'Pending', value: 'PENDING' }
                     ]}
                 />
+            )
+        },
+        {
+            title: 'Detail',
+            render: (_: any, record: Doctor) => (
+                <Button size="small" onClick={() => navigate(`/admin/doctors/${record.id}`)}>
+                    View
+                </Button>
             )
         }
     ];
