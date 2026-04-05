@@ -17,6 +17,7 @@ import PatientAppointments from './pages/patient/PatientAppointment';
 import PaymentVerify from './pages/patient/PaymentVerify';
 import PaymentSuccess from './pages/patient/PaymentSuccess';
 import PaymentFailed from './pages/patient/PaymentFailed';
+import BookAppointment from './pages/patient/BookAppointment';
 
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
             <Route index element={<Navigate to="/patient/profile" replace />} />
             <Route path="profile" element={<PatientProfile />} />
             <Route path="appointments" element={<PatientAppointments />} />
-            <Route path="book" element={<div>Book coming soon</div>} />
+            <Route path="book" element={<BookAppointment />} />
           </Route>
         </Route>
 
