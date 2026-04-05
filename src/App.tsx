@@ -13,6 +13,11 @@ import AdminSpecializations from './pages/admin/AdminSpecializations';
 import AdminMedicalService from './pages/admin/AdminMedicalService';
 import AdminDoctorDetail from './pages/admin/AdminDoctorDetail';
 import PatientLayout from './pages/patient/PatientLayout';
+import PatientAppointments from './pages/patient/PatientAppointment';
+import PaymentVerify from './pages/patient/PaymentVerify';
+import PaymentSuccess from './pages/patient/PaymentSuccess';
+import PaymentFailed from './pages/patient/PaymentFailed';
+
 function App() {
   return (
     <BrowserRouter>
@@ -20,16 +25,20 @@ function App() {
         {/* Public */}
         <Route path="/login" element={<Login />} />
         <Route path="/oauth2/callback" element={<OAuthCallback />} />
+        <Route path="/payment/verify" element={<PaymentVerify />} /> {/* ← move here */}
 
         {/* Patient */}
         <Route element={<ProtectedRoute allowedRoles={['ROLE_PATIENT']} />}>
           <Route path="/patient" element={<PatientLayout />}>
             <Route index element={<Navigate to="/patient/profile" replace />} />
             <Route path="profile" element={<PatientProfile />} />
-            <Route path="appointments" element={<div>Appointments coming soon</div>} />
+            <Route path="appointments" element={<PatientAppointments />} />
             <Route path="book" element={<div>Book coming soon</div>} />
           </Route>
         </Route>
+
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment/failed" element={<PaymentFailed />} />
 
         {/* Admin */}
         <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
