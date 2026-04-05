@@ -18,6 +18,10 @@ import PaymentVerify from './pages/patient/PaymentVerify';
 import PaymentSuccess from './pages/patient/PaymentSuccess';
 import PaymentFailed from './pages/patient/PaymentFailed';
 import BookAppointment from './pages/patient/BookAppointment';
+import ReceptionistBookAppointment from './pages/receptionist/ReceptionistBookAppointment';
+import ReceptionistAppointments from './pages/receptionist/ReceptionistAppointments';
+import ReceptionistLayout from './pages/receptionist/ReceptionistLayout';
+
 
 function App() {
   return (
@@ -36,6 +40,13 @@ function App() {
             <Route path="appointments" element={<PatientAppointments />} />
             <Route path="book" element={<BookAppointment />} />
           </Route>
+        </Route>
+
+        {/* Receptionist */}
+        <Route element={<ProtectedRoute allowedRoles={['ROLE_RECEPTIONIST']} />}>
+          <Route index element={<Navigate to="/receptionist/book" replace />} />
+          <Route path="book" element={<ReceptionistBookAppointment />} />
+          <Route path="appointments" element={<ReceptionistAppointments />} />
         </Route>
 
         <Route path="/payment/success" element={<PaymentSuccess />} />
