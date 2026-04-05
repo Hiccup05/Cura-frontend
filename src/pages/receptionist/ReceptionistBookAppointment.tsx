@@ -48,7 +48,7 @@ const ReceptionistBookAppointment = () => {
 
         if (doctor && doctor.specialization.length > 0) {
             const specIds = doctor.specialization.map(s => s.id);
-            Promise.all(specIds.map(id => api.get(`/public/services/${id}`)))
+            Promise.all(specIds.map(id => api.get(`/public/service/${id}`)))
                 .then((responses) => {
                     const allServices = responses.flatMap(r => r.data);
                     const unique = allServices.filter((s, i, arr) =>

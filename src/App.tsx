@@ -21,6 +21,9 @@ import BookAppointment from './pages/patient/BookAppointment';
 import ReceptionistBookAppointment from './pages/receptionist/ReceptionistBookAppointment';
 import ReceptionistAppointments from './pages/receptionist/ReceptionistAppointments';
 import ReceptionistLayout from './pages/receptionist/ReceptionistLayout';
+import DoctorLayout from './pages/doctor/DoctorLayout';
+import DoctorProfilePage from './pages/doctor/DoctorProfile';
+import DoctorAppointments from './pages/doctor/DoctorAppointments';
 
 
 function App() {
@@ -42,11 +45,21 @@ function App() {
           </Route>
         </Route>
 
+        <Route element={<ProtectedRoute allowedRoles={['ROLE_DOCTOR']} />}>
+          <Route path="/doctor" element={<DoctorLayout />}>
+            <Route index element={<Navigate to="/doctor/profile" replace />} />
+            <Route path="profile" element={<DoctorProfilePage />} />
+            <Route path="appointments" element={<DoctorAppointments />} />
+          </Route>
+        </Route>
+
         {/* Receptionist */}
         <Route element={<ProtectedRoute allowedRoles={['ROLE_RECEPTIONIST']} />}>
-          <Route index element={<Navigate to="/receptionist/book" replace />} />
-          <Route path="book" element={<ReceptionistBookAppointment />} />
-          <Route path="appointments" element={<ReceptionistAppointments />} />
+          <Route path="/receptionist" element={<ReceptionistLayout />}>
+            <Route index element={<Navigate to="/receptionist/appointments" replace />} />
+            <Route path="appointments" element={<ReceptionistAppointments />} />
+            <Route path="book" element={<ReceptionistBookAppointment />} />
+          </Route>
         </Route>
 
         <Route path="/payment/success" element={<PaymentSuccess />} />
