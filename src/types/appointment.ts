@@ -40,3 +40,22 @@ export interface AppointmentResponse {
     walkInPatientName: string | null
     walkInPatientPhone: string | null
 }
+
+export interface PublicDoctor {
+    id: number
+    firstName: string
+    lastName: string
+    specialization: { id: number; name: string }[]
+    yearsOfExperience: number
+    licenseNumber: string
+    doctorStatus: string
+}
+
+export interface PublicSchedule {
+    id: number
+    doctorId: number
+    doctorName: string
+    dayOfWeek: string
+    startTime: string
+    endTime: string
+}
