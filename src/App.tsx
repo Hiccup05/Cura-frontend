@@ -24,7 +24,9 @@ import ReceptionistLayout from './pages/receptionist/ReceptionistLayout';
 import DoctorLayout from './pages/doctor/DoctorLayout';
 import DoctorProfilePage from './pages/doctor/DoctorProfile';
 import DoctorAppointments from './pages/doctor/DoctorAppointments';
-
+import PatientHomePage from './pages/patient/PatientHomePage';
+import ReceptionistProfile from './pages/receptionist/ReceptionistProfile';
+import ReceptionistHomePage from './pages/receptionist/ReceptionistHome';
 
 function App() {
   return (
@@ -42,6 +44,7 @@ function App() {
             <Route path="profile" element={<PatientProfile />} />
             <Route path="appointments" element={<PatientAppointments />} />
             <Route path="book" element={<BookAppointment />} />
+            <Route path="home" element={<PatientHomePage />} />
           </Route>
         </Route>
 
@@ -59,11 +62,14 @@ function App() {
             <Route index element={<Navigate to="/receptionist/appointments" replace />} />
             <Route path="appointments" element={<ReceptionistAppointments />} />
             <Route path="book" element={<ReceptionistBookAppointment />} />
+            <Route path="profile" element={<ReceptionistProfile />} />
+            <Route path="home" element={<ReceptionistHomePage />} />
           </Route>
         </Route>
 
         <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/payment/failed" element={<PaymentFailed />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
 
         {/* Admin */}
         <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>

@@ -18,3 +18,13 @@ export interface DoctorSchedule {
     maxAppointments: number
     isAvailable: boolean
 }
+
+export interface PublicDoctor {
+    id: number;
+    firstName: string;
+    lastName: string;
+    licenseNumber: string;
+    yearsOfExperience: number;
+    doctorStatus: string; // e.g., 'ACTIVE', 'INACTIVE'
+    specialization: { id: number; name: string }[]; // array of specializations
+}

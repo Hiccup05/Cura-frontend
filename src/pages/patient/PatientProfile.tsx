@@ -1,18 +1,42 @@
 import { useEffect, useState } from "react";
-import { Avatar, Card, Col, Row, Tag, Typography, Button, Spin, Form, Input, Select, DatePicker, message } from "antd";
-import { UserOutlined, EditOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+    Avatar,
+    Card,
+    Col,
+    Row,
+    Tag,
+    Typography,
+    Button,
+    Spin,
+    Form,
+    Input,
+    Select,
+    DatePicker,
+    message,
+    Divider,
+} from "antd";
+import {
+    UserOutlined,
+    EditOutlined,
+    SaveOutlined,
+    CloseOutlined,
+} from "@ant-design/icons";
 import api from "../../services/api";
 import { PatientProfile } from "../../types/patient";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
 
+const PRIMARY = "#056672"; // consistent accent
+const CARD_BG = "#ffffff"; // white card background
+const TEXT_COLOR = "#1f2937"; // dark text
 
 const InfoRow = ({ label, value }: { label: string; value?: string }) => (
-    <div style={{ marginBottom: 16 }}>
-        <Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 2 }}>
+    <div style={{ marginBottom: 12 }}>
+        <Text type="secondary" style={{ fontSize: 12 }}>
             {label}
         </Text>
+        <br />
         <Text strong>{value || "—"}</Text>
     </div>
 );
@@ -34,7 +58,9 @@ const PatientDashboard = () => {
         form.setFieldsValue({
             firstName: patient?.firstName,
             lastName: patient?.lastName,
-            dateOfBirth: patient?.dateOfBirth ? dayjs(patient.dateOfBirth) : null,
+            dateOfBirth: patient?.dateOfBirth
+                ? dayjs(patient.dateOfBirth)
+                : null,
             gender: patient?.gender,
             phoneNumber: patient?.phoneNumber,
             address: patient?.address,
@@ -54,158 +80,278 @@ const PatientDashboard = () => {
 
     const handleSave = (values: any) => {
         setSaving(true);
-        api.patch('/patients', {
+        api.patch("/patients", {
             ...values,
-            dateOfBirth: values.dateOfBirth?.format('YYYY-MM-DD')
+            dateOfBirth: values.dateOfBirth?.format("YYYY-MM-DD"),
         })
             .then((response) => {
                 setPatient(response.data);
                 setIsEditing(false);
-                message.success('Profile updated');
+                message.success("Profile updated");
             })
-            .catch(() => message.error('Failed to update profile'))
+            .catch(() => message.error("Failed to update profile"))
             .finally(() => setSaving(false));
     };
 
-    if (loading) return (
-        <div style={{ display: "flex", justifyContent: "center", paddingTop: 100 }}>
-            <Spin size="large" />
-        </div>
-    );
+    if (loading)
+        return (
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    paddingTop: 100,
+                }}
+            >
+                <Spin size="large" />
+            </div>
+        );
 
-    const fullName = `${patient?.firstName ?? ""} ${patient?.lastName ?? ""}`.trim() || "Patient";
-    const initials = fullName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+    const fullName = `${patient?.firstName ?? ""} ${patient?.lastName ?? ""
+        }`.trim();
+    const initials = fullName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
 
     return (
-        <div style={{ maxWidth: 900, margin: "40px auto", padding: "0 24px" }}>
-            <Card bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-                    <Avatar size={80} style={{ backgroundColor: "#1677ff", fontSize: 28 }}>
-                        {initials || <UserOutlined />}
-                    </Avatar>
-                    <div style={{ flex: 1 }}>
-                        <Title level={3} style={{ margin: 0 }}>{fullName}</Title>
-                        <Text type="secondary">{patient?.gender} · {patient?.bloodGroup &&
-                            <Tag color="red">{patient.bloodGroup}</Tag>}
+        <div style={{ maxWidth: 1000, margin: "40px auto", padding: "0 24px" }}>
+            {/* Header Card */}
+            <Card
+                bordered={false}
+                style={{
+                    borderRadius: 12,
+                    marginBottom: 24,
+                    background: CARD_BG,
+                }}
+            >
+                <Row align="middle" gutter={24}>
+                    <Col>
+                        <Avatar
+                            size={90}
+                            style={{ backgroundColor: PRIMARY, fontSize: 28 }}
+                        >
+                            {initials || <UserOutlined />}
+                        </Avatar>
+                    </Col>
+                    <Col flex="auto">
+                        <Title level={2} style={{ margin: 0, color: TEXT_COLOR }}>
+                            {fullName || "Patient"}
+                        </Title>
+                        <Text type="secondary" style={{ fontSize: 14 }}>
+                            {patient?.gender && (
+                                <Tag color="blue">{patient.gender}</Tag>
+                            )}{" "}
+                            {patient?.bloodGroup && (
+                                <Tag color="volcano">{patient.bloodGroup}</Tag>
+                            )}
                         </Text>
-                    </div>
-                    {!isEditing ? (
-                        <Button icon={<EditOutlined />} onClick={handleEdit}>
-                            Edit Profile
-                        </Button>
-                    ) : (
-                        <div style={{ display: 'flex', gap: 8 }}>
+                    </Col>
+                    <Col>
+                        {!isEditing ? (
                             <Button
-                                icon={<SaveOutlined />}
-                                type="primary"
-                                loading={saving}
-                                onClick={() => form.submit()}
+                                icon={<EditOutlined />}
+                                type="default"
+                                onClick={handleEdit}
                             >
-                                Save
+                                Edit Profile
                             </Button>
-                            <Button icon={<CloseOutlined />} onClick={handleCancel}>
-                                Cancel
-                            </Button>
-                        </div>
-                    )}
-                </div>
+                        ) : (
+                            <div style={{ display: "flex", gap: 8 }}>
+                                <Button
+                                    icon={<SaveOutlined />}
+                                    type="primary"
+                                    loading={saving}
+                                    onClick={() => form.submit()}
+                                >
+                                    Save
+                                </Button>
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    onClick={handleCancel}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        )}
+                    </Col>
+                </Row>
             </Card>
 
             {/* View Mode */}
             {!isEditing && (
-                <Row gutter={24}>
-                    <Col xs={24} md={12}>
-                        <Card title="Personal Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
-                            <InfoRow label="Date of Birth" value={patient?.dateOfBirth} />
-                            <InfoRow label="Phone Number" value={patient?.phoneNumber} />
-                            <InfoRow label="Address" value={patient?.address} />
-                        </Card>
-                    </Col>
-                    <Col xs={24} md={12}>
-                        <Card title="Medical Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
-                            <InfoRow label="Blood Group" value={patient?.bloodGroup} />
-                            <InfoRow label="Allergies" value={patient?.allergies} />
-                            <InfoRow label="Chronic Conditions" value={patient?.chronicConditions} />
-                        </Card>
-                    </Col>
-                    <Col xs={24}>
-                        <Card title="Emergency Contact" bordered={false} style={{ borderRadius: 16 }}>
-                            <Row gutter={24}>
-                                <Col xs={24} md={12}>
-                                    <InfoRow label="Contact Name" value={patient?.emergencyContactName} />
-                                </Col>
-                                <Col xs={24} md={12}>
-                                    <InfoRow label="Contact Phone" value={patient?.emergencyContactPhone} />
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row>
+                <>
+                    <Row gutter={24}>
+                        <Col xs={24} md={12}>
+                            <Card
+                                title="Personal Information"
+                                bordered={false}
+                                style={{ borderRadius: 12, marginBottom: 24 }}
+                            >
+                                <InfoRow
+                                    label="Date of Birth"
+                                    value={patient?.dateOfBirth}
+                                />
+                                <InfoRow
+                                    label="Phone Number"
+                                    value={patient?.phoneNumber}
+                                />
+                                <InfoRow label="Address" value={patient?.address} />
+                            </Card>
+                        </Col>
+                        <Col xs={24} md={12}>
+                            <Card
+                                title="Medical Information"
+                                bordered={false}
+                                style={{ borderRadius: 12, marginBottom: 24 }}
+                            >
+                                <InfoRow
+                                    label="Blood Group"
+                                    value={patient?.bloodGroup}
+                                />
+                                <InfoRow
+                                    label="Allergies"
+                                    value={patient?.allergies}
+                                />
+                                <InfoRow
+                                    label="Chronic Conditions"
+                                    value={patient?.chronicConditions}
+                                />
+                            </Card>
+                        </Col>
+                    </Row>
+                    <Card
+                        title="Emergency Contact"
+                        bordered={false}
+                        style={{ borderRadius: 12 }}
+                    >
+                        <Row gutter={24}>
+                            <Col xs={24} md={12}>
+                                <InfoRow
+                                    label="Contact Name"
+                                    value={patient?.emergencyContactName}
+                                />
+                            </Col>
+                            <Col xs={24} md={12}>
+                                <InfoRow
+                                    label="Contact Phone"
+                                    value={patient?.emergencyContactPhone}
+                                />
+                            </Col>
+                        </Row>
+                    </Card>
+                </>
             )}
 
             {/* Edit Mode */}
             {isEditing && (
-                <Form form={form} layout="vertical" onFinish={handleSave}>
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={handleSave}
+                    initialValues={{}}
+                >
+                    <Divider />
                     <Row gutter={24}>
                         <Col xs={24} md={12}>
-                            <Card title="Personal Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
-                                <Form.Item label="First Name" name="firstName">
-                                    <Input />
+                            <Card
+                                title="Personal Information"
+                                bordered={false}
+                                style={{ borderRadius: 12 }}
+                            >
+                                <Form.Item
+                                    label="First Name"
+                                    name="firstName"
+                                    rules={[{ required: true }]}
+                                >
+                                    <Input placeholder="First name" />
                                 </Form.Item>
-                                <Form.Item label="Last Name" name="lastName">
-                                    <Input />
+                                <Form.Item
+                                    label="Last Name"
+                                    name="lastName"
+                                    rules={[{ required: true }]}
+                                >
+                                    <Input placeholder="Last name" />
                                 </Form.Item>
                                 <Form.Item label="Date of Birth" name="dateOfBirth">
-                                    <DatePicker style={{ width: '100%' }} />
+                                    <DatePicker
+                                        style={{ width: "100%" }}
+                                        placeholder="Select birth date"
+                                    />
                                 </Form.Item>
                                 <Form.Item label="Gender" name="gender">
-                                    <Select options={[
-                                        { label: 'Male', value: 'MALE' },
-                                        { label: 'Female', value: 'FEMALE' },
-                                        { label: 'Other', value: 'OTHER' }
-                                    ]} />
+                                    <Select
+                                        options={[
+                                            { label: "Male", value: "MALE" },
+                                            { label: "Female", value: "FEMALE" },
+                                            { label: "Other", value: "OTHER" },
+                                        ]}
+                                    />
                                 </Form.Item>
-                                <Form.Item label="Phone Number" name="phoneNumber">
-                                    <Input />
+                                <Form.Item
+                                    label="Phone Number"
+                                    name="phoneNumber"
+                                >
+                                    <Input placeholder="Phone number" />
                                 </Form.Item>
                                 <Form.Item label="Address" name="address">
-                                    <Input />
+                                    <Input placeholder="Address" />
                                 </Form.Item>
                             </Card>
                         </Col>
                         <Col xs={24} md={12}>
-                            <Card title="Medical Information" bordered={false} style={{ borderRadius: 16, marginBottom: 24 }}>
+                            <Card
+                                title="Medical Information"
+                                bordered={false}
+                                style={{ borderRadius: 12 }}
+                            >
                                 <Form.Item label="Blood Group" name="bloodGroup">
-                                    <Select options={[
-                                        { label: 'A+', value: 'A_POSITIVE' },
-                                        { label: 'A-', value: 'A_NEGATIVE' },
-                                        { label: 'B+', value: 'B_POSITIVE' },
-                                        { label: 'B-', value: 'B_NEGATIVE' },
-                                        { label: 'O+', value: 'O_POSITIVE' },
-                                        { label: 'O-', value: 'O_NEGATIVE' },
-                                        { label: 'AB+', value: 'AB_POSITIVE' },
-                                        { label: 'AB-', value: 'AB_NEGATIVE' },
-                                    ]} />
+                                    <Select
+                                        options={[
+                                            { label: "A+", value: "A_POSITIVE" },
+                                            { label: "A-", value: "A_NEGATIVE" },
+                                            { label: "B+", value: "B_POSITIVE" },
+                                            { label: "B-", value: "B_NEGATIVE" },
+                                            { label: "O+", value: "O_POSITIVE" },
+                                            { label: "O-", value: "O_NEGATIVE" },
+                                            { label: "AB+", value: "AB_POSITIVE" },
+                                            { label: "AB-", value: "AB_NEGATIVE" },
+                                        ]}
+                                    />
                                 </Form.Item>
                                 <Form.Item label="Allergies" name="allergies">
                                     <Input.TextArea rows={2} />
                                 </Form.Item>
-                                <Form.Item label="Chronic Conditions" name="chronicConditions">
+                                <Form.Item
+                                    label="Chronic Conditions"
+                                    name="chronicConditions"
+                                >
                                     <Input.TextArea rows={2} />
                                 </Form.Item>
                             </Card>
                         </Col>
                         <Col xs={24}>
-                            <Card title="Emergency Contact" bordered={false} style={{ borderRadius: 16 }}>
+                            <Card
+                                title="Emergency Contact"
+                                bordered={false}
+                                style={{ borderRadius: 12 }}
+                            >
                                 <Row gutter={24}>
                                     <Col xs={24} md={12}>
-                                        <Form.Item label="Contact Name" name="emergencyContactName">
-                                            <Input />
+                                        <Form.Item
+                                            label="Contact Name"
+                                            name="emergencyContactName"
+                                        >
+                                            <Input placeholder="Emergency contact name" />
                                         </Form.Item>
                                     </Col>
                                     <Col xs={24} md={12}>
-                                        <Form.Item label="Contact Phone" name="emergencyContactPhone">
-                                            <Input />
+                                        <Form.Item
+                                            label="Contact Phone"
+                                            name="emergencyContactPhone"
+                                        >
+                                            <Input placeholder="Emergency contact phone" />
                                         </Form.Item>
                                     </Col>
                                 </Row>

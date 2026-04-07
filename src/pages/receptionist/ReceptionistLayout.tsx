@@ -11,13 +11,11 @@ const ReceptionistLayout = () => {
     const location = useLocation()
 
     const menuItems = [
+        { key: '/receptionist/home', label: 'Home' },
         { key: '/receptionist/appointments', label: 'All Appointments' },
         { key: '/receptionist/book', label: 'Book Appointment' },
+        { key: '/receptionist/profile', label: 'Profile' },
     ]
-
-    const handleMenuClick = ({ key }: { key: string }) => {
-        navigate(key)
-    }
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -36,7 +34,7 @@ const ReceptionistLayout = () => {
                     mode="horizontal"
                     selectedKeys={[location.pathname]}
                     items={menuItems}
-                    onClick={handleMenuClick}
+                    onClick={({ key }) => navigate(key)}
                     style={{ flex: 1, border: 'none' }}
                 />
                 <Button icon={<LogoutOutlined />} onClick={logout} danger>

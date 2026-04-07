@@ -1,32 +1,50 @@
 import { useEffect, useState } from 'react';
-import { Table, Tag, Button, Modal, Typography, message, Descriptions, Card, Spin } from 'antd';
+import {
+    Table, Tag, Button, Modal, Typography, message,
+    Descriptions, Card, Spin, Segmented, Select, Space
+} from 'antd';
+import { FilterOutlined } from '@ant-design/icons';
 import api from '../../services/api';
 import { AppointmentSummary, AppointmentResponse, AppointmentStatus } from '../../types/appointment';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-const statusColors: Record<AppointmentStatus, string> = {
+const STATUS_COLORS: Record<AppointmentStatus, string> = {
     PENDING: 'gold',
     CONFIRMED: 'green',
     CANCELLED: 'red',
-    COMPLETED: 'blue'
+    COMPLETED: 'blue',
 };
+
+const ALL_STATUSES: AppointmentStatus[] = ['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'];
 
 const ReceptionistAppointments = () => {
     const [appointments, setAppointments] = useState<AppointmentSummary[]>([]);
     const [loading, setLoading] = useState(true);
+    const [myReceptionistId, setMyReceptionistId] = useState<number | null>(null);
+
+    // Filters
+    const [view, setView] = useState<'all' | 'mine'>('all');
+    const [statusFilter, setStatusFilter] = useState<AppointmentStatus[]>([]);
+
+    // Detail modal
     const [selectedAppointment, setSelectedAppointment] = useState<AppointmentResponse | null>(null);
     const [detailLoading, setDetailLoading] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
+        // Get own receptionist ID for "My Bookings" filter
+        api.get('/receptionist/profile')
+            .then(r => setMyReceptionistId(r.data.id))
+            .catch(() => { });
+
         fetchAppointments();
     }, []);
 
     const fetchAppointments = () => {
         setLoading(true);
         api.get('/receptionist/appointment')
-            .then((response) => setAppointments(response.data))
+            .then(r => setAppointments(r.data))
             .catch(() => message.error('Failed to load appointments'))
             .finally(() => setLoading(false));
     };
@@ -36,49 +54,119 @@ const ReceptionistAppointments = () => {
         setModalOpen(true);
         setSelectedAppointment(null);
         api.get(`/receptionist/appointment/${id}`)
-            .then((response) => setSelectedAppointment(response.data))
+            .then(r => setSelectedAppointment(r.data))
             .catch(() => message.error('Failed to load appointment details'))
             .finally(() => setDetailLoading(false));
     };
 
+    // Apply filters client-side
+    const filtered = appointments.filter(a => {
+        const matchesView =
+            view === 'all' ||
+            (view === 'mine' && (a as any).receptionistId === myReceptionistId);
+        const matchesStatus =
+            statusFilter.length === 0 ||
+            statusFilter.includes(a.appointmentStatus);
+        return matchesView && matchesStatus;
+    });
+
     const columns = [
-        { title: 'Date', dataIndex: 'appointmentDate' },
-        { title: 'Time', dataIndex: 'appointmentTime' },
-        { title: 'Service', dataIndex: 'medicalServiceName' },
+        {
+            title: 'Date',
+            dataIndex: 'appointmentDate',
+            sorter: (a: AppointmentSummary, b: AppointmentSummary) =>
+                a.appointmentDate.localeCompare(b.appointmentDate),
+        },
+        {
+            title: 'Time',
+            dataIndex: 'appointmentTime',
+            render: (t: string) => t?.slice(0, 5),
+        },
+        {
+            title: 'Service',
+            dataIndex: 'medicalServiceName',
+        },
         {
             title: 'Status',
             dataIndex: 'appointmentStatus',
-            render: (status: AppointmentStatus) => (
-                <Tag color={statusColors[status]}>{status}</Tag>
-            )
+            render: (s: AppointmentStatus) => (
+                <Tag color={STATUS_COLORS[s]}>{s}</Tag>
+            ),
         },
         {
             title: 'Paid',
             dataIndex: 'isPaid',
-            render: (isPaid: boolean) => (
-                <Tag color={isPaid ? 'green' : 'red'}>{isPaid ? 'Yes' : 'No'}</Tag>
-            )
+            render: (v: boolean) => (
+                <Tag color={v ? 'green' : 'red'}>{v ? 'Yes' : 'No'}</Tag>
+            ),
         },
         {
-            title: 'Actions',
+            title: '',
             render: (_: any, record: AppointmentSummary) => (
                 <Button size="small" onClick={() => viewDetail(record.appointmentId)}>
                     View
                 </Button>
-            )
-        }
+            ),
+        },
     ];
 
     return (
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
             <Card bordered={false} style={{ borderRadius: 16 }}>
-                <Title level={4} style={{ marginBottom: 24 }}>All Appointments</Title>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: 12,
+                    marginBottom: 20,
+                }}>
+                    <Title level={4} style={{ margin: 0 }}>Appointments</Title>
+
+                    <Space wrap>
+                        {/* All vs My Bookings */}
+                        <Segmented
+                            options={[
+                                { label: 'All', value: 'all' },
+                                { label: 'My Bookings', value: 'mine' },
+                            ]}
+                            value={view}
+                            onChange={v => setView(v as 'all' | 'mine')}
+                        />
+
+                        {/* Status filter */}
+                        <Select
+                            mode="multiple"
+                            allowClear
+                            placeholder={
+                                <span>
+                                    <FilterOutlined style={{ marginRight: 6 }} />
+                                    Filter by status
+                                </span>
+                            }
+                            style={{ minWidth: 200 }}
+                            value={statusFilter}
+                            onChange={setStatusFilter}
+                            options={ALL_STATUSES.map(s => ({
+                                label: <Tag color={STATUS_COLORS[s]}>{s}</Tag>,
+                                value: s,
+                            }))}
+                            maxTagCount="responsive"
+                        />
+                    </Space>
+                </div>
+
                 <Table
                     rowKey="appointmentId"
                     loading={loading}
-                    dataSource={appointments}
+                    dataSource={filtered}
                     columns={columns}
                     pagination={{ pageSize: 10 }}
+                    locale={{
+                        emptyText: statusFilter.length > 0 || view === 'mine'
+                            ? 'No appointments match the current filters'
+                            : 'No appointments found',
+                    }}
                 />
             </Card>
 
@@ -101,7 +189,9 @@ const ReceptionistAppointments = () => {
                         <Descriptions.Item label="Price">NPR {selectedAppointment.price}</Descriptions.Item>
                         <Descriptions.Item label="Duration">{selectedAppointment.durationMinutes} mins</Descriptions.Item>
                         <Descriptions.Item label="Status">
-                            <Tag color={statusColors[selectedAppointment.status]}>{selectedAppointment.status}</Tag>
+                            <Tag color={STATUS_COLORS[selectedAppointment.status]}>
+                                {selectedAppointment.status}
+                            </Tag>
                         </Descriptions.Item>
                         <Descriptions.Item label="Patient" span={2}>
                             {selectedAppointment.walkInPatientName || '—'}
