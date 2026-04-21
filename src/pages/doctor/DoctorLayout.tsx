@@ -1,10 +1,9 @@
-import { Layout, Menu, Button, Typography } from 'antd'
+import { Layout, Menu, Button } from 'antd'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { LogoutOutlined } from '@ant-design/icons'
 import { logout } from '../../services/authService'
 
 const { Header, Content } = Layout
-const { Title } = Typography
 
 const DoctorLayout = () => {
     const navigate = useNavigate()
@@ -27,9 +26,12 @@ const DoctorLayout = () => {
                 borderBottom: '1px solid #f0f0f0',
                 padding: '0 24px'
             }}>
-                <Title level={4} style={{ margin: 0, color: '#1677ff', whiteSpace: 'nowrap' }}>
-                    🏥 Cura
-                </Title>
+                <img
+                    src="https://res.cloudinary.com/docykoj1r/image/upload/v1776766564/logo.png"
+                    alt="Cura"
+                    style={{ height: 36, objectFit: 'contain', cursor: 'pointer' }}
+                    onClick={() => navigate('/doctor/profile')}
+                />
                 <Menu
                     mode="horizontal"
                     selectedKeys={[location.pathname]}

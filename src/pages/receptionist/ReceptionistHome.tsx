@@ -3,13 +3,13 @@ import { Card, Col, Row, Statistic, Button, Table, Tag, Typography, Space } from
 import {
     CalendarOutlined,
     CheckCircleOutlined,
-    ClockCircleOutlined,
     PlusOutlined,
     UserOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 import { AppointmentSummary, AppointmentStatus } from '../../types/appointment'
+import DiscoveryHomeContent from '../../components/DiscoveryHomeContent'
 
 const { Title, Text } = Typography
 
@@ -27,26 +27,20 @@ const ReceptionistHome = () => {
     const [name, setName] = useState<string>('')
 
     useEffect(() => {
-        // Fetch receptionist profile for greeting
         api.get('/receptionist/profile')
-            .then(r => setName(r.data.firstName ?? ''))
+            .then((r) => setName(r.data.firstName ?? ''))
             .catch(() => { })
 
-        // Fetch all appointments
-        api.get('/receptionist/appointments')
-            .then(r => setAppointments(r.data))
+        api.get('/receptionist/appointment')
+            .then((r) => setAppointments(r.data))
             .catch(() => { })
             .finally(() => setLoading(false))
     }, [])
 
-    // Derived stats
     const today = new Date().toISOString().split('T')[0]
-    const todayAppointments = appointments.filter(a => a.appointmentDate === today)
-    const pending = appointments.filter(a => a.appointmentStatus === 'PENDING').length
-    const confirmed = appointments.filter(a => a.appointmentStatus === 'CONFIRMED').length
-    const completed = appointments.filter(a => a.appointmentStatus === 'COMPLETED').length
-
-    // Show 5 most recent for the quick-view table
+    const todayAppointments = appointments.filter((a) => a.appointmentDate === today)
+    const confirmed = appointments.filter((a) => a.appointmentStatus === 'CONFIRMED').length
+    const completed = appointments.filter((a) => a.appointmentStatus === 'COMPLETED').length
     const recent = appointments.slice(0, 5)
 
     const columns = [
@@ -73,56 +67,40 @@ const ReceptionistHome = () => {
             dataIndex: 'appointmentStatus',
             key: 'status',
             width: 110,
-            render: (s: AppointmentStatus) => (
-                <Tag color={STATUS_COLOR[s]}>{s}</Tag>
-            ),
+            render: (s: AppointmentStatus) => <Tag color={STATUS_COLOR[s]}>{s}</Tag>,
         },
         {
             title: 'Paid',
             dataIndex: 'isPaid',
             key: 'paid',
             width: 70,
-            render: (v: boolean) => (
-                <Tag color={v ? 'green' : 'default'}>{v ? 'Yes' : 'No'}</Tag>
-            ),
+            render: (v: boolean) => <Tag color={v ? 'green' : 'default'}>{v ? 'Yes' : 'No'}</Tag>,
         },
     ]
 
-    return (
-        <Space direction="vertical" size={24} style={{ width: '100%' }}>
-
-            {/* Greeting */}
-            <div>
+    const lead = (
+        <div style={{ padding: '24px 20px 0', maxWidth: 1200, margin: '0 auto' }}>
+            <div style={{ marginBottom: 16 }}>
                 <Title level={3} style={{ margin: 0 }}>
-                    Good {getTimeOfDay()}{name ? `, ${name}` : ''} 👋
+                    Good {getTimeOfDay()}
+                    {name ? `, ${name}` : ''}
                 </Title>
-                <Text type="secondary">Here's what's happening today.</Text>
+                <Text type="secondary">Today&apos;s snapshot and shortcuts — scroll for doctors and services.</Text>
             </div>
 
-            {/* Stats */}
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
                 <Col xs={12} sm={6}>
-                    <Card>
+                    <Card style={{ borderRadius: 12 }}>
                         <Statistic
-                            title="Today's Appointments"
+                            title="Today's appointments"
                             value={todayAppointments.length}
                             prefix={<CalendarOutlined />}
                             valueStyle={{ color: '#1677ff' }}
                         />
                     </Card>
                 </Col>
-                <Col xs={12} sm={6}>
-                    <Card>
-                        <Statistic
-                            title="Pending"
-                            value={pending}
-                            prefix={<ClockCircleOutlined />}
-                            valueStyle={{ color: '#fa8c16' }}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} sm={6}>
-                    <Card>
+                <Col xs={12} sm={8}>
+                    <Card style={{ borderRadius: 12 }}>
                         <Statistic
                             title="Confirmed"
                             value={confirmed}
@@ -131,8 +109,8 @@ const ReceptionistHome = () => {
                         />
                     </Card>
                 </Col>
-                <Col xs={12} sm={6}>
-                    <Card>
+                <Col xs={12} sm={8}>
+                    <Card style={{ borderRadius: 12 }}>
                         <Statistic
                             title="Completed"
                             value={completed}
@@ -143,39 +121,28 @@ const ReceptionistHome = () => {
                 </Col>
             </Row>
 
-            {/* Quick actions */}
-            <Card title="Quick Actions" size="small">
+            <Card title="Quick actions" size="small" style={{ borderRadius: 12, marginBottom: 16 }}>
                 <Space wrap>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={() => navigate('/receptionist/book')}
-                    >
-                        Book Appointment
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/receptionist/book')}>
+                        Book appointment
                     </Button>
-                    <Button
-                        icon={<CalendarOutlined />}
-                        onClick={() => navigate('/receptionist/appointments')}
-                    >
-                        View All Appointments
+                    <Button icon={<CalendarOutlined />} onClick={() => navigate('/receptionist/appointments')}>
+                        All appointments
                     </Button>
-                    <Button
-                        icon={<UserOutlined />}
-                        onClick={() => navigate('/receptionist/profile')}
-                    >
-                        My Profile
+                    <Button icon={<UserOutlined />} onClick={() => navigate('/receptionist/profile')}>
+                        Profile
                     </Button>
                 </Space>
             </Card>
 
-            {/* Recent appointments */}
             <Card
-                title="Recent Appointments"
+                title="Recent appointments"
                 extra={
                     <Button type="link" onClick={() => navigate('/receptionist/appointments')}>
                         View all
                     </Button>
                 }
+                style={{ borderRadius: 12, marginBottom: 8 }}
             >
                 <Table
                     dataSource={recent}
@@ -186,8 +153,17 @@ const ReceptionistHome = () => {
                     size="small"
                 />
             </Card>
+        </div>
+    )
 
-        </Space>
+    return (
+        <DiscoveryHomeContent
+            bookBasePath="/receptionist/book"
+            lead={lead}
+            heroTitle="Front desk, same great care"
+            heroSubtitle="Jump to booking from a doctor or service below, or use Quick actions."
+            heroPrimaryLabel="Book appointment"
+        />
     )
 }
 

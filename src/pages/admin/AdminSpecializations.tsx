@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Typography, message, Popconfirm } from 'antd';
+import { Table, Button, Modal, Form, Input, Typography, message, Popconfirm, InputNumber } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import api from '../../services/api';
 import { Specialization } from '../../types/admin';
 
 const { Title } = Typography;
+const specializationNamePattern = /^[A-Za-z][A-Za-z\s&(),./'-]*$/;
 
 const AdminSpecializations = () => {
     const [specializations, setSpecializations] = useState<Specialization[]>([]);
@@ -25,7 +26,7 @@ const AdminSpecializations = () => {
             .finally(() => setLoading(false));
     };
 
-    const handleCreate = (values: { name: string }) => {
+    const handleCreate = (values: { name: string; slotDuration: number }) => {
         setCreating(true);
         api.post('/admin/specialization', values)
             .then(() => {
@@ -58,9 +59,14 @@ const AdminSpecializations = () => {
             dataIndex: 'name'
         },
         {
+            title: 'Slot (mins)',
+            dataIndex: 'slotDuration',
+            render: (v: number | undefined) => (v != null ? v : '—')
+        },
+        {
             title: 'Action',
             render: (_: any, record: Specialization) => (
-                // Popconfirm — shows "are you sure?" before deleting
+
                 <Popconfirm
                     title="Delete this specialization?"
                     onConfirm={() => handleDelete(record.id)}
@@ -109,9 +115,23 @@ const AdminSpecializations = () => {
                     <Form.Item
                         label="Name"
                         name="name"
-                        rules={[{ required: true, message: 'Name is required' }]}
+                        rules={[
+                            { required: true, message: 'Name is required' },
+                            { whitespace: true, message: 'Name cannot be empty' },
+                            { min: 2, message: 'Name must be at least 2 characters' },
+                            { max: 100, message: 'Name must be at most 100 characters' },
+                            { pattern: specializationNamePattern, message: 'Name contains invalid characters' }
+                        ]}
                     >
-                        <Input placeholder="e.g. Cardiology" />
+                        <Input placeholder="e.g. Cardiology" maxLength={100} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Slot duration (minutes)"
+                        name="slotDuration"
+                        rules={[{ required: true, message: 'Slot duration is required' }]}
+                        extra="All services under this specialization use this slot length when booking."
+                    >
+                        <InputNumber min={5} max={480} style={{ width: '100%' }} placeholder="e.g. 30" />
                     </Form.Item>
                     <Button type="primary" htmlType="submit" loading={creating} block>
                         Create

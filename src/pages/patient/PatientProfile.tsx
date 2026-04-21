@@ -14,6 +14,7 @@ import {
     DatePicker,
     message,
     Divider,
+    Upload,
 } from "antd";
 import {
     UserOutlined,
@@ -24,12 +25,13 @@ import {
 import api from "../../services/api";
 import { PatientProfile } from "../../types/patient";
 import dayjs from "dayjs";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 const { Title, Text } = Typography;
 
-const PRIMARY = "#056672"; // consistent accent
-const CARD_BG = "#ffffff"; // white card background
-const TEXT_COLOR = "#1f2937"; // dark text
+const PRIMARY = "#056672";
+const CARD_BG = "#ffffff";
+const TEXT_COLOR = "#1f2937";
 
 const InfoRow = ({ label, value }: { label: string; value?: string }) => (
     <div style={{ marginBottom: 12 }}>
@@ -47,6 +49,7 @@ const PatientDashboard = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [form] = Form.useForm();
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
     useEffect(() => {
         api.get("/patients")
@@ -115,6 +118,45 @@ const PatientDashboard = () => {
         .toUpperCase()
         .slice(0, 2);
 
+        const uploadProfilePicture = async (file: File) => {
+            if (!file.type.startsWith("image/")) {
+                message.error("Only image files are allowed");
+                return Upload.LIST_IGNORE;
+            }
+        
+            const formData = new FormData();
+            formData.append("file", file);
+        
+            setUploadingPhoto(true);
+            try {
+                await api.post("/user/profile/picture", formData);
+    
+                const refreshed = await api.get("/patients");
+                setPatient(refreshed.data);
+                message.success("Profile picture updated");
+            } catch (error: any) {
+                message.error("Upload failed");
+            } finally {
+                setUploadingPhoto(false);
+            }
+        
+            return false;
+        };
+
+    const deleteProfilePicture = async () => {
+        setUploadingPhoto(true);
+        try {
+            await api.delete("/user/profile/picture");
+            const refreshed = await api.get("/patients");
+            setPatient(refreshed.data);
+            message.success("Profile picture removed");
+        } catch {
+            message.error("Failed to remove profile picture");
+        } finally {
+            setUploadingPhoto(false);
+        }
+    };
+
     return (
         <div style={{ maxWidth: 1000, margin: "40px auto", padding: "0 24px" }}>
             {/* Header Card */}
@@ -130,6 +172,7 @@ const PatientDashboard = () => {
                     <Col>
                         <Avatar
                             size={90}
+                            src={resolveImageUrl(patient?.profilePictureUrl) || undefined}
                             style={{ backgroundColor: PRIMARY, fontSize: 28 }}
                         >
                             {initials || <UserOutlined />}
@@ -139,6 +182,11 @@ const PatientDashboard = () => {
                         <Title level={2} style={{ margin: 0, color: TEXT_COLOR }}>
                             {fullName || "Patient"}
                         </Title>
+                        {patient?.id != null && (
+                            <Text type="secondary" style={{ display: 'block', marginTop: 4 }}>
+                                Your unique ID for clinic sharing: <Text copyable strong>{String(patient.id)}</Text>
+                            </Text>
+                        )}
                         <Text type="secondary" style={{ fontSize: 14 }}>
                             {patient?.gender && (
                                 <Tag color="blue">{patient.gender}</Tag>
@@ -150,13 +198,31 @@ const PatientDashboard = () => {
                     </Col>
                     <Col>
                         {!isEditing ? (
-                            <Button
-                                icon={<EditOutlined />}
-                                type="default"
-                                onClick={handleEdit}
-                            >
-                                Edit Profile
-                            </Button>
+                            <div style={{ display: "flex", gap: 8 }}>
+                                <Upload
+                                    accept="image/*"
+                                    showUploadList={false}
+                                    beforeUpload={uploadProfilePicture}
+                                    customRequest={() => {}}
+                                >
+                                    <Button loading={uploadingPhoto}>Upload Photo</Button>
+                                </Upload>
+                                <Button
+                                    danger
+                                    disabled={!patient?.profilePictureUrl}
+                                    loading={uploadingPhoto}
+                                    onClick={deleteProfilePicture}
+                                >
+                                    Remove Photo
+                                </Button>
+                                <Button
+                                    icon={<EditOutlined />}
+                                    type="default"
+                                    onClick={handleEdit}
+                                >
+                                    Edit Profile
+                                </Button>
+                            </div>
                         ) : (
                             <div style={{ display: "flex", gap: 8 }}>
                                 <Button

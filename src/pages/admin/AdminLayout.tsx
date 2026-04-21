@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Layout, Menu, Button, Typography } from 'antd'
+import { Layout, Menu, Button } from 'antd'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import {
     DashboardOutlined,
@@ -13,7 +13,6 @@ import {
 import { logout } from '../../services/authService'
 
 const { Header, Sider, Content } = Layout
-const { Title } = Typography
 
 const AdminLayout = () => {
     const [collapsed, setCollapsed] = useState(false)
@@ -39,12 +38,12 @@ const AdminLayout = () => {
             label: 'Receptionists'
         },
         {
-            key: '/admin/services',        // new
+            key: '/admin/services',
             icon: <AppstoreOutlined />,
             label: 'Medical Services'
         },
         {
-            key: '/admin/specializations', // new
+            key: '/admin/specializations',
             icon: <TagOutlined />,
             label: 'Specializations'
         },
@@ -80,11 +79,15 @@ const AdminLayout = () => {
                     borderBottom: '1px solid #f0f0f0',
                     marginBottom: 8
                 }}>
-                    {!collapsed && (
-                        <Title level={4} style={{ margin: 0, color: '#1677ff' }}>
-                            Cura Admin
-                        </Title>
-                    )}
+                    <img
+                        src="https://res.cloudinary.com/docykoj1r/image/upload/v1776766564/logo.png"
+                        alt="Cura Admin"
+                        style={{
+                            height: collapsed ? 28 : 36,
+                            objectFit: 'contain',
+                            transition: 'height 0.2s ease',
+                        }}
+                    />
                 </div>
 
                 {/* Navigation links */}

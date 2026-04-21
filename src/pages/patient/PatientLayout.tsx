@@ -1,11 +1,10 @@
-import { Layout, Menu, Button, Typography } from 'antd'
+import { Layout, Menu, Button, Avatar, Space } from 'antd'
 import type { MenuProps } from 'antd'
-import { useNavigate, useLocation, Outlet, Navigate } from 'react-router-dom'
-import { LogoutOutlined } from '@ant-design/icons'
+import { useNavigate, useLocation, Outlet } from 'react-router-dom'
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons'
 import { logout } from '../../services/authService'
 
 const { Header, Content } = Layout
-const { Title } = Typography
 
 const PatientLayout = () => {
     const navigate = useNavigate()
@@ -13,10 +12,11 @@ const PatientLayout = () => {
 
     const menuItems: MenuProps['items'] = [
         { key: '/patient/home', label: 'Home' },
-        { key: '/patient/profile', label: 'Profile' },
         { key: '/patient/appointments', label: 'My Appointments' },
         { key: '/patient/book', label: 'Book Appointment' },
     ]
+    const menuKeys = menuItems.map((item) => item?.key as string)
+    const selectedMenuKeys = menuKeys.includes(location.pathname) ? [location.pathname] : []
 
     const handleMenuClick: MenuProps['onClick'] = (e) => {
         navigate(e.key)
@@ -37,15 +37,22 @@ const PatientLayout = () => {
                     background: '#ffffff',
                     padding: '0 24px',
                     borderBottom: '1px solid #e6e6e6',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 100,
+                    backdropFilter: 'saturate(160%) blur(10px)',
                 }}
             >
-                <Title level={4} style={{ margin: 0, color: '#056672' }}>
-                    🏥 Cura
-                </Title>
+                <img
+                    src="https://res.cloudinary.com/docykoj1r/image/upload/v1776766564/logo.png"
+                    alt="Cura"
+                    style={{ height: 36, objectFit: 'contain', cursor: 'pointer' }}
+                    onClick={() => navigate('/patient/home')}
+                />
 
                 <Menu
                     mode="horizontal"
-                    selectedKeys={[location.pathname]}
+                    selectedKeys={selectedMenuKeys}
                     items={menuItems}
                     onClick={handleMenuClick}
                     style={{
@@ -56,17 +63,31 @@ const PatientLayout = () => {
                     }}
                 />
 
-                <Button
-                    icon={<LogoutOutlined />}
-                    onClick={handleLogout}
-                    style={{
-                        background: '#F5222D',
-                        color: 'white',
-                        border: 'none',
-                    }}
-                >
-                    Logout
-                </Button>
+                <Space size={10}>
+                    <Button
+                        icon={
+                            <Avatar
+                                size="small"
+                                icon={<UserOutlined />}
+                                style={{ backgroundColor: '#e6f4ff', color: '#1677ff' }}
+                            />
+                        }
+                        onClick={() => navigate('/patient/profile')}
+                    >
+                        Profile
+                    </Button>
+                    <Button
+                        icon={<LogoutOutlined />}
+                        onClick={handleLogout}
+                        style={{
+                            background: '#F5222D',
+                            color: 'white',
+                            border: 'none',
+                        }}
+                    >
+                        Logout
+                    </Button>
+                </Space>
             </Header>
 
             {/* Content */}

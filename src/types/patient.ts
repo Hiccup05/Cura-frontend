@@ -16,6 +16,7 @@ export interface PatientProfile {
     chronicConditions: string
     emergencyContactName: string
     emergencyContactPhone: string
+    profilePictureUrl?: string | null
 }
 
 export interface PatientResponseDto {
@@ -31,4 +32,5 @@ export interface PatientResponseDto {
     chronicConditions: string;
     emergencyContactName: string;
     emergencyContactPhone: string;
+    profilePictureUrl?: string | null;
 }

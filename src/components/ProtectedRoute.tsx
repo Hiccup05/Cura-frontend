@@ -31,7 +31,10 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
         </div>
     );
 
-    if (status === 'fail') return <Navigate to="/login" replace />;
+    if (status === 'fail') {
+        const redirectPath = allowedRoles.includes('ROLE_ADMIN') ? '/admin-login' : '/login';
+        return <Navigate to={redirectPath} replace />;
+    }
 
     // Outlet renders the child route that matched
     return <Outlet />;

@@ -1,6 +1,8 @@
 export interface Specialization {
     id: number
     name: string
+    /** Minutes per appointment slot for all services in this specialization. */
+    slotDuration?: number
 }
 
 export type DoctorStatus = 'ACTIVE' | 'INACTIVE' | 'ON_LEAVE'
@@ -30,15 +32,13 @@ export interface MedicalService {
     name: string
     price: number
     durationMinutes: number
+    /** From specialization; drives slot grid when present. */
+    slotDuration?: number
     description: string
     isActive: boolean
     specializationId: number
     specializationName: string
-}
-
-export interface Specialization {
-    id: number
-    name: string
+    photoUrl?: string | null
 }
 
 export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
@@ -60,4 +60,19 @@ export interface Leave {
     endDate: string
     reason: string
     DoctorId: number
+}
+
+export interface AdminProfile {
+    id: number
+    username: string
+    email: string
+    profilePictureUrl?: string | null
+}
+
+export interface AdminStats {
+    totalDoctors: number
+    totalPatients: number
+    totalAppointments: number
+    pendingDoctorApprovals: number
+    totalRevenue: number
 }

@@ -1,37 +1,32 @@
 import { useEffect, useState } from 'react'
 import {
-    Card, Form, Input, Button, Descriptions, Tag,
-    Typography, Space, message, Spin,
+    Card, Form, Input, Button, Descriptions, Tag, Avatar, Upload,
+    Typography, Space, message, Spin, Row, Col,
 } from 'antd'
 import { EditOutlined, CloseOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons'
 import api from '../../services/api'
+import {
+    ReceptionistProfile as ReceptionistProfileData,
+    UpdateReceptionistDto
+} from '../../types/receptionist'
+import { resolveImageUrl } from '../../utils/imageUrl'
 
 const { Title, Text } = Typography
-
-interface ReceptionistProfile {
-    id: number
-    firstName: string
-    lastName: string
-    phoneNumber?: string
-    status: string
-}
-
-interface UpdateReceptionistDto {
-    firstName: string
-    lastName: string
-    phoneNumber?: string
-}
 
 const STATUS_COLOR: Record<string, string> = {
     ACTIVE: 'green',
     INACTIVE: 'red',
 }
 
+const PRIMARY = '#056672'
+const CARD_BG = '#ffffff'
+
 const ReceptionistProfile = () => {
-    const [profile, setProfile] = useState<ReceptionistProfile | null>(null)
+    const [profile, setProfile] = useState<ReceptionistProfileData | null>(null)
     const [loading, setLoading] = useState(true)
     const [editing, setEditing] = useState(false)
     const [saving, setSaving] = useState(false)
+    const [uploadingPhoto, setUploadingPhoto] = useState(false)
     const [form] = Form.useForm<UpdateReceptionistDto>()
 
     useEffect(() => {
@@ -69,6 +64,49 @@ const ReceptionistProfile = () => {
         }
     }
 
+    const refreshProfile = async () => {
+        const r = await api.get('/receptionist')
+        setProfile(r.data)
+    }
+
+    const uploadProfilePicture = async (file: File) => {
+        if (!file.type.startsWith('image/')) {
+            message.error('Only image files are allowed')
+            return false
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            message.error('File size must be under 2MB')
+            return false
+        }
+
+        const formData = new FormData()
+        formData.append('file', file)
+        setUploadingPhoto(true)
+        try {
+            await api.post('/user/profile/picture', formData)
+            await refreshProfile()
+            message.success('Profile picture updated')
+        } catch {
+            message.error('Failed to upload profile picture')
+        } finally {
+            setUploadingPhoto(false)
+        }
+        return false
+    }
+
+    const deleteProfilePicture = async () => {
+        setUploadingPhoto(true)
+        try {
+            await api.delete('/user/profile/picture')
+            await refreshProfile()
+            message.success('Profile picture removed')
+        } catch {
+            message.error('Failed to remove profile picture')
+        } finally {
+            setUploadingPhoto(false)
+        }
+    }
+
     if (loading) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}>
@@ -80,35 +118,77 @@ const ReceptionistProfile = () => {
     if (!profile) return null
 
     return (
-        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div style={{ maxWidth: 900, margin: '40px auto', padding: '0 24px' }}>
             <Space direction="vertical" size={20} style={{ width: '100%' }}>
 
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{
-                        width: 56, height: 56, borderRadius: '50%',
-                        background: '#e6f4ff', display: 'flex',
-                        alignItems: 'center', justifyContent: 'center',
-                        fontSize: 24, color: '#1677ff',
-                    }}>
-                        <UserOutlined />
-                    </div>
-                    <div>
-                        <Title level={4} style={{ margin: 0 }}>
-                            {profile.firstName} {profile.lastName}
-                        </Title>
-                        <Text type="secondary">Receptionist</Text>
-                    </div>
-                </div>
+                <Card
+                    bordered={false}
+                    style={{
+                        borderRadius: 12,
+                        background: CARD_BG,
+                    }}
+                >
+                    <Row align="middle" gutter={24}>
+                        <Col>
+                            <Avatar
+                                size={90}
+                                src={resolveImageUrl(profile.profilePictureUrl) || undefined}
+                                style={{ backgroundColor: PRIMARY, fontSize: 28 }}
+                            >
+                                <UserOutlined />
+                            </Avatar>
+                        </Col>
+                        <Col flex="auto">
+                            <Title level={2} style={{ margin: 0 }}>
+                                {profile.firstName} {profile.lastName}
+                            </Title>
+                            {profile.id != null && (
+                                <Text type="secondary" style={{ display: 'block', marginTop: 4 }}>
+                                    Your unique ID for clinic sharing: <Text copyable strong>{String(profile.id)}</Text>
+                                </Text>
+                            )}
+                            <Text type="secondary">
+                                Receptionist <Tag color={STATUS_COLOR[profile.status] ?? 'default'}>{profile.status}</Tag>
+                            </Text>
+                        </Col>
+                        <Col>
+                            {!editing ? (
+                                <Space>
+                                    <Upload accept="image/*" showUploadList={false} beforeUpload={uploadProfilePicture} customRequest={() => {}}>
+                                        <Button loading={uploadingPhoto}>Upload Photo</Button>
+                                    </Upload>
+                                    <Button
+                                        danger
+                                        disabled={!profile.profilePictureUrl}
+                                        loading={uploadingPhoto}
+                                        onClick={deleteProfilePicture}
+                                    >
+                                        Remove Photo
+                                    </Button>
+                                    <Button icon={<EditOutlined />} onClick={startEdit}>
+                                        Edit Profile
+                                    </Button>
+                                </Space>
+                            ) : (
+                                <Space>
+                                    <Button icon={<SaveOutlined />} type="primary" loading={saving} onClick={() => form.submit()}>
+                                        Save
+                                    </Button>
+                                    <Button icon={<CloseOutlined />} onClick={cancelEdit}>
+                                        Cancel
+                                    </Button>
+                                </Space>
+                            )}
+                        </Col>
+                    </Row>
+                </Card>
 
                 {/* View mode */}
                 {!editing && (
                     <Card
-                        extra={
-                            <Button icon={<EditOutlined />} onClick={startEdit}>
-                                Edit
-                            </Button>
-                        }
+                        bordered={false}
+                        style={{ borderRadius: 12 }}
                     >
                         <Descriptions column={1} bordered size="small">
                             <Descriptions.Item label="First Name">
@@ -120,11 +200,6 @@ const ReceptionistProfile = () => {
                             <Descriptions.Item label="Phone">
                                 {profile.phoneNumber ?? <Text type="secondary">Not set</Text>}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Status">
-                                <Tag color={STATUS_COLOR[profile.status] ?? 'default'}>
-                                    {profile.status}
-                                </Tag>
-                            </Descriptions.Item>
                         </Descriptions>
                     </Card>
                 )}
@@ -132,12 +207,9 @@ const ReceptionistProfile = () => {
                 {/* Edit mode */}
                 {editing && (
                     <Card
+                        bordered={false}
+                        style={{ borderRadius: 12 }}
                         title="Edit Profile"
-                        extra={
-                            <Button icon={<CloseOutlined />} onClick={cancelEdit}>
-                                Cancel
-                            </Button>
-                        }
                     >
                         <Form
                             form={form}

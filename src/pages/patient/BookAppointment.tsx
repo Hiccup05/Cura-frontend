@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
     Steps,
     Card,
@@ -15,8 +15,10 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
-import { PublicDoctor, PublicSchedule } from "../../types/appointment";
+import { PublicDoctor, PublicSchedule } from "../../types/doctor";
 import { MedicalService } from "../../types/admin";
+import { serviceSlotDurationMinutes } from "../../utils/serviceSlotDuration";
+import { normalizeMedicalServices } from "../../utils/medicalService";
 
 const { Title, Text } = Typography;
 const { TextArea, Search } = Input;
@@ -31,10 +33,23 @@ const dayOfWeekMap: Record<string, number> = {
     SATURDAY: 6,
 };
 
+const formatDoctorName = (doctor: Pick<PublicDoctor, "id" | "firstName" | "lastName">) => {
+    const parts = [doctor.firstName, doctor.lastName]
+        .map((value) => (value ?? "").toString().trim())
+        .filter((value) => value.length > 0 && value.toLowerCase() !== "null" && value.toLowerCase() !== "undefined");
+    return parts.join(" ") || `Doctor ${doctor.id}`;
+};
+
 const BookAppointment = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const initialDoctorId = Number(searchParams.get("doctorId"));
+    const doctorIdParam = searchParams.get("doctorId");
+    const serviceIdParam = searchParams.get("serviceId");
+    const initialDoctorId = doctorIdParam ? Number(doctorIdParam) : NaN;
+    const initialServiceId = serviceIdParam ? Number(serviceIdParam) : NaN;
+
+    const bookingPrefillDoneRef = useRef(false);
+    const pendingServiceIdRef = useRef<number | null>(null);
 
     const [doctors, setDoctors] = useState<PublicDoctor[]>([]);
     const [services, setServices] = useState<MedicalService[]>([]);
@@ -70,7 +85,7 @@ const BookAppointment = () => {
             const specIds = doctor.specialization.map((s) => s.id);
             Promise.all(specIds.map((id) => api.get(`/public/service/${id}`)))
                 .then((responses) => {
-                    const allServices = responses.flatMap((r) => r.data);
+                    const allServices = responses.flatMap((r) => normalizeMedicalServices(r.data as MedicalService[]));
                     const unique = allServices.filter(
                         (s, i, arr) => arr.findIndex((x) => x.id === s.id) === i
                     );
@@ -85,16 +100,60 @@ const BookAppointment = () => {
     }, [doctors]);
 
     useEffect(() => {
-        if (initialDoctorId && doctors.length > 0) {
+        if (!doctors.length || bookingPrefillDoneRef.current) return;
+
+        const hasDoctor = Number.isFinite(initialDoctorId) && initialDoctorId > 0;
+        const hasService = Number.isFinite(initialServiceId) && initialServiceId > 0;
+
+        if (hasDoctor && hasService) {
+            const doc = doctors.find((d) => d.id === initialDoctorId);
+            if (!doc) return;
+            bookingPrefillDoneRef.current = true;
+            pendingServiceIdRef.current = initialServiceId;
+            handleDoctorSelect(initialDoctorId);
+            return;
+        }
+
+        if (hasDoctor && !hasService) {
             const docExists = doctors.find((d) => d.id === initialDoctorId);
             if (docExists) {
+                bookingPrefillDoneRef.current = true;
                 handleDoctorSelect(initialDoctorId);
             }
+            return;
         }
-    }, [initialDoctorId, doctors, handleDoctorSelect]);
+
+        if (hasService && !hasDoctor) {
+            api
+                .get("/public/service")
+                .then((res) => {
+                    const list = normalizeMedicalServices(res.data as MedicalService[]);
+                    const svc = list.find((s) => s.id === initialServiceId);
+                    if (!svc) return;
+                    const doctor = doctors.find((d) =>
+                        d.specialization.some((sp) => sp.id === svc.specializationId)
+                    );
+                    if (!doctor) return;
+                    bookingPrefillDoneRef.current = true;
+                    pendingServiceIdRef.current = initialServiceId;
+                    handleDoctorSelect(doctor.id);
+                })
+                .catch(() => message.error("Failed to load services"));
+        }
+    }, [doctors, initialDoctorId, initialServiceId, handleDoctorSelect]);
+
+    useEffect(() => {
+        const sid = pendingServiceIdRef.current;
+        if (sid == null || !services.length) return;
+        const svc = services.find((s) => s.id === sid);
+        if (svc) {
+            setSelectedService(svc);
+            pendingServiceIdRef.current = null;
+        }
+    }, [services]);
 
     const filteredDoctors = doctors.filter((d) =>
-        `${d.firstName} ${d.lastName}`
+        formatDoctorName(d)
             .toLowerCase()
             .includes(doctorSearch.toLowerCase())
     );
@@ -121,7 +180,7 @@ const BookAppointment = () => {
         const slots: string[] = [];
         let current = dayjs(`2000-01-01 ${schedule.startTime}`);
         const end = dayjs(`2000-01-01 ${schedule.endTime}`);
-        const duration = selectedService.durationMinutes;
+        const duration = serviceSlotDurationMinutes(selectedService);
 
         while (current.isBefore(end.subtract(duration - 1, "minute"))) {
             slots.push(current.format("HH:mm"));
@@ -172,7 +231,7 @@ const BookAppointment = () => {
                         onChange={handleDoctorSelect}
                         value={selectedDoctor?.id}
                         options={filteredDoctors.map((d) => ({
-                            label: `${d.firstName} ${d.lastName}`,
+                            label: formatDoctorName(d),
                             value: d.id,
                         }))}
                     />
@@ -198,7 +257,7 @@ const BookAppointment = () => {
                         }
                         value={selectedService?.id}
                         options={filteredServices.map((s) => ({
-                            label: `${s.name} — NPR ${s.price}`,
+                            label: `${s.name} — NPR ${s.price} (${serviceSlotDurationMinutes(s)} min slots)`,
                             value: s.id,
                         }))}
                     />
@@ -248,8 +307,7 @@ const BookAppointment = () => {
                 <>
                     <Card size="small" style={{ marginBottom: 16 }}>
                         <Text>
-                            <strong>Doctor:</strong> {selectedDoctor?.firstName}{" "}
-                            {selectedDoctor?.lastName}
+                            <strong>Doctor:</strong> {selectedDoctor ? formatDoctorName(selectedDoctor) : "—"}
                         </Text>
                         <br />
                         <Text>

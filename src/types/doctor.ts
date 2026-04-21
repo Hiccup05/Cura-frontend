@@ -6,6 +6,7 @@ export interface DoctorProfile {
     yearsOfExperience: number
     doctorStatus: string
     specialization: { id: number; name: string }[]
+    profilePictureUrl?: string | null
 }
 
 export interface DoctorSchedule {
@@ -20,11 +21,21 @@ export interface DoctorSchedule {
 }
 
 export interface PublicDoctor {
-    id: number;
-    firstName: string;
-    lastName: string;
-    licenseNumber: string;
-    yearsOfExperience: number;
-    doctorStatus: string; // e.g., 'ACTIVE', 'INACTIVE'
-    specialization: { id: number; name: string }[]; // array of specializations
+    id: number
+    firstName: string
+    lastName: string
+    licenseNumber: string
+    yearsOfExperience: number
+    doctorStatus: string
+    specialization: { id: number; name: string }[]
+    profilePictureUrl?: string | null
+}
+
+export interface PublicSchedule {
+    id: number
+    doctorId: number
+    doctorName: string
+    dayOfWeek: string
+    startTime: string
+    endTime: string
 }

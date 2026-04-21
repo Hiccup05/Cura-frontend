@@ -7,7 +7,7 @@ import {
     DollarOutlined
 } from '@ant-design/icons';
 import api from '../../services/api';
-import { AdminStats } from '../../types/auth';
+import { AdminStats } from '../../types/admin';
 
 const { Title } = Typography;
 

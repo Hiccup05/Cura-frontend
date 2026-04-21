@@ -6,5 +6,6 @@ export const login = async (data: { username: string; password: string }) => {
 
 export const logout = async () => {
     await api.post('/auth/logout');
-    window.location.href = '/login';
+    const isAdminArea = window.location.pathname.startsWith('/admin');
+    window.location.href = isAdminArea ? '/admin-login' : '/login';
 };

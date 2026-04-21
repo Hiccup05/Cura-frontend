@@ -9,6 +9,8 @@ export interface AppointmentSummary {
     doctorId: number
     medicalServiceName: string
     isPaid: boolean
+    receptionistId: number | null
+    walkInPatientName: string | null
 }
 
 export interface PrescriptionResponse {
@@ -26,11 +28,11 @@ export interface AppointmentResponse {
     appointmentTime: string
     status: AppointmentStatus
     type: AppointmentType
-    reason: string
+    reason: string | null
     price: number
     durationMinutes: number
     isPaid: boolean
-    paymentMethod: string
+    paymentMethod: string | null
     bookedAt: string
     prescriptionResponseDto: PrescriptionResponse | null
     patientId: number | null
@@ -41,21 +43,9 @@ export interface AppointmentResponse {
     walkInPatientPhone: string | null
 }
 
-export interface PublicDoctor {
-    id: number
-    firstName: string
-    lastName: string
-    specialization: { id: number; name: string }[]
-    yearsOfExperience: number
-    licenseNumber: string
-    doctorStatus: string
+export type DoctorAppointmentSummary = AppointmentSummary & {
+    patientName?: string | null
+    receptionistName?: string | null
 }
 
-export interface PublicSchedule {
-    id: number
-    doctorId: number
-    doctorName: string
-    dayOfWeek: string
-    startTime: string
-    endTime: string
-}
+export type DatePreset = 'ALL' | 'TODAY' | 'TOMORROW' | 'THIS_WEEK' | 'CUSTOM'

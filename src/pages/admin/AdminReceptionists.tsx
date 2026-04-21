@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, Tag, Button, Modal, Form, Input, Select, Typography, message } from 'antd';
+import { Table, Tag, Button, Modal, Form, Input, Select, Typography, message, InputNumber } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import api from '../../services/api';
 import { Receptionist, ReceptionistStatus } from '../../types/admin';
@@ -11,13 +11,15 @@ const statusColors: Record<ReceptionistStatus, string> = {
     INACTIVE: 'red'
 };
 
+const namePattern = /^[A-Za-z][A-Za-z\s'-]*$/;
+const phonePattern = /^[0-9]{7,15}$/;
+
 const AdminReceptionists = () => {
     const [receptionists, setReceptionists] = useState<Receptionist[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [creating, setCreating] = useState(false);
 
-    // form instance — lets us control the form programmatically
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -126,17 +128,55 @@ const AdminReceptionists = () => {
                 footer={null}
             >
                 <Form form={form} layout="vertical" onFinish={handleCreate}>
-                    <Form.Item label="User ID" name="userId" rules={[{ required: true }]}>
-                        <Input type="number" placeholder="Existing user ID" />
+                    <Form.Item
+                        label="User ID"
+                        name="userId"
+                        rules={[
+                            { required: true, message: 'User ID is required' },
+                            { type: 'number', min: 1, message: 'User ID must be greater than 0' }
+                        ]}
+                    >
+                        <InputNumber style={{ width: '100%' }} min={1} precision={0} placeholder="User-shared unique ID" />
                     </Form.Item>
-                    <Form.Item label="First Name" name="firstName" rules={[{ required: true }]}>
+                    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 12 }}>
+                        Ask the user for their shared unique ID from their profile screen.
+                    </Typography.Text>
+                    <Form.Item
+                        label="First Name"
+                        name="firstName"
+                        rules={[
+                            { required: true, message: 'First name is required' },
+                            { whitespace: true, message: 'First name cannot be empty' },
+                            { min: 2, message: 'First name must be at least 2 characters' },
+                            { max: 60, message: 'First name must be at most 60 characters' },
+                            { pattern: namePattern, message: 'First name contains invalid characters' }
+                        ]}
+                    >
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Last Name" name="lastName" rules={[{ required: true }]}>
+                    <Form.Item
+                        label="Last Name"
+                        name="lastName"
+                        rules={[
+                            { required: true, message: 'Last name is required' },
+                            { whitespace: true, message: 'Last name cannot be empty' },
+                            { min: 2, message: 'Last name must be at least 2 characters' },
+                            { max: 60, message: 'Last name must be at most 60 characters' },
+                            { pattern: namePattern, message: 'Last name contains invalid characters' }
+                        ]}
+                    >
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Phone Number" name="phoneNumber" rules={[{ required: true }]}>
-                        <Input />
+                    <Form.Item
+                        label="Phone Number"
+                        name="phoneNumber"
+                        normalize={(value) => (value ?? '').replace(/\D/g, '')}
+                        rules={[
+                            { required: true, message: 'Phone number is required' },
+                            { pattern: phonePattern, message: 'Phone number must be 7 to 15 digits' }
+                        ]}
+                    >
+                        <Input inputMode="tel" maxLength={15} placeholder="Enter digits only" />
                     </Form.Item>
                     <Button type="primary" htmlType="submit" loading={creating} block>
                         Create

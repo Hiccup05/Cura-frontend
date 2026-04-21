@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
 const TEAL = '#0ea5e9';
-const DARK_BG = '#0f172a'; // base dark color
-const TEXT_COLOR = '#f8fafc'; // light text
+const DARK_BG = '#0f172a';
+const TEXT_COLOR = '#f8fafc';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Navbar = () => {
         const el = document.getElementById(id);
         if (!el) return;
 
-        const yOffset = -64; // navbar height
+        const yOffset = -64;
         const y = el.getBoundingClientRect().top + window.scrollY + yOffset;
 
         window.scrollTo({ top: y, behavior: 'smooth' });
@@ -29,12 +29,11 @@ const Navbar = () => {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '0 40px',
-                background: DARK_BG, // dark background
+                background: DARK_BG,
                 boxShadow: '0 1px 16px rgba(0,0,0,0.4)',
                 zIndex: 1000,
             }}
         >
-            {/* Logo */}
             <div
                 onClick={() => navigate('/')}
                 style={{
@@ -44,27 +43,16 @@ const Navbar = () => {
                     cursor: 'pointer',
                 }}
             >
-                <div
+                <img
+                    src="https://res.cloudinary.com/docykoj1r/image/upload/v1776766564/logo.png"
+                    alt="Cura"
                     style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 7,
-                        background: TEAL,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#fff',
-                        fontWeight: 600,
+                        height: 36,
+                        objectFit: 'contain',
                     }}
-                >
-                    +
-                </div>
-                <span style={{ fontSize: 18, fontWeight: 600, color: TEXT_COLOR }}>
-                    Cura
-                </span>
+                />
             </div>
 
-            {/* Links */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
                 <button
                     onClick={() => scrollTo('services')}
@@ -72,7 +60,7 @@ const Navbar = () => {
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
-                        color: '#cbd5e1', // lighter gray for link
+                        color: '#cbd5e1',
                         fontSize: 14,
                     }}
                 >
@@ -85,20 +73,19 @@ const Navbar = () => {
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
-                        color: '#cbd5e1', // lighter gray
+                        color: '#cbd5e1',
                         fontSize: 14,
                     }}
                 >
                     Doctors
                 </button>
 
-                {/* Sign In */}
                 <button
                     onClick={() => navigate('/login')}
                     style={{
                         padding: '6px 18px',
                         borderRadius: 20,
-                        border: `1px solid #334155`, // darker border
+                        border: `1px solid #334155`,
                         background: 'transparent',
                         cursor: 'pointer',
                         color: TEXT_COLOR,
@@ -107,7 +94,6 @@ const Navbar = () => {
                     Sign In
                 </button>
 
-                {/* CTA */}
                 <button
                     onClick={() => navigate('/login')}
                     style={{

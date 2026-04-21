@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
+import AdminLogin from './pages/AdminLogin';
 import OAuthCallback from './pages/OAuthCallback';
 import PatientProfile from './pages/patient/PatientProfile';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -14,7 +15,6 @@ import AdminMedicalService from './pages/admin/AdminMedicalService';
 import AdminDoctorDetail from './pages/admin/AdminDoctorDetail';
 import PatientLayout from './pages/patient/PatientLayout';
 import PatientAppointments from './pages/patient/PatientAppointment';
-import PaymentVerify from './pages/patient/PaymentVerify';
 import PaymentSuccess from './pages/patient/PaymentSuccess';
 import PaymentFailed from './pages/patient/PaymentFailed';
 import BookAppointment from './pages/patient/BookAppointment';
@@ -27,15 +27,19 @@ import DoctorAppointments from './pages/doctor/DoctorAppointments';
 import PatientHomePage from './pages/patient/PatientHomePage';
 import ReceptionistProfile from './pages/receptionist/ReceptionistProfile';
 import ReceptionistHomePage from './pages/receptionist/ReceptionistHome';
+import LandingPage from './pages/LandingPage';
+import AboutPage from './pages/AboutPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Public */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/oauth2/callback" element={<OAuthCallback />} />
-        <Route path="/payment/verify" element={<PaymentVerify />} /> {/* ← move here */}
 
         {/* Patient */}
         <Route element={<ProtectedRoute allowedRoles={['ROLE_PATIENT']} />}>
@@ -59,7 +63,7 @@ function App() {
         {/* Receptionist */}
         <Route element={<ProtectedRoute allowedRoles={['ROLE_RECEPTIONIST']} />}>
           <Route path="/receptionist" element={<ReceptionistLayout />}>
-            <Route index element={<Navigate to="/receptionist/appointments" replace />} />
+            <Route index element={<Navigate to="/receptionist/home" replace />} />
             <Route path="appointments" element={<ReceptionistAppointments />} />
             <Route path="book" element={<ReceptionistBookAppointment />} />
             <Route path="profile" element={<ReceptionistProfile />} />
@@ -69,8 +73,6 @@ function App() {
 
         <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/payment/failed" element={<PaymentFailed />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-
         {/* Admin */}
         <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
           <Route path="/admin" element={<AdminLayout />}>
@@ -85,7 +87,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

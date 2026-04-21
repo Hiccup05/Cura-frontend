@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     Table, Tag, Button, Modal, Typography, message,
     Descriptions, Card, Spin, Segmented, Select, Space
 } from 'antd';
+import { Input } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import api from '../../services/api';
 import { AppointmentSummary, AppointmentResponse, AppointmentStatus } from '../../types/appointment';
@@ -26,6 +27,8 @@ const ReceptionistAppointments = () => {
     // Filters
     const [view, setView] = useState<'all' | 'mine'>('all');
     const [statusFilter, setStatusFilter] = useState<AppointmentStatus[]>([]);
+    const [walkInPatientNameInput, setWalkInPatientNameInput] = useState('');
+    const [walkInPatientNameFilter, setWalkInPatientNameFilter] = useState('');
 
     // Detail modal
     const [selectedAppointment, setSelectedAppointment] = useState<AppointmentResponse | null>(null);
@@ -33,21 +36,33 @@ const ReceptionistAppointments = () => {
     const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
-        // Get own receptionist ID for "My Bookings" filter
+        // Get own receptionist ID for "My Bookings" filter and default queries
         api.get('/receptionist/profile')
             .then(r => setMyReceptionistId(r.data.id))
             .catch(() => { });
-
-        fetchAppointments();
     }, []);
 
-    const fetchAppointments = () => {
+    const fetchAppointments = useCallback(() => {
         setLoading(true);
-        api.get('/receptionist/appointment')
+        const params: Record<string, string | number> = {};
+        if (view === 'mine' && myReceptionistId !== null) {
+            params.receptionistId = myReceptionistId;
+        }
+        if (walkInPatientNameFilter.trim()) {
+            params.walkInPatientName = walkInPatientNameFilter.trim();
+        }
+
+        api.get('/receptionist/appointment', { params })
             .then(r => setAppointments(r.data))
             .catch(() => message.error('Failed to load appointments'))
             .finally(() => setLoading(false));
-    };
+    }, [view, myReceptionistId, walkInPatientNameFilter]);
+
+    useEffect(() => {
+        // Wait until we know my receptionist id before querying "mine"
+        if (view === 'mine' && myReceptionistId === null) return;
+        fetchAppointments();
+    }, [view, myReceptionistId, fetchAppointments]);
 
     const viewDetail = (id: number) => {
         setDetailLoading(true);
@@ -61,9 +76,7 @@ const ReceptionistAppointments = () => {
 
     // Apply filters client-side
     const filtered = appointments.filter(a => {
-        const matchesView =
-            view === 'all' ||
-            (view === 'mine' && (a as any).receptionistId === myReceptionistId);
+        const matchesView = view === 'all' || (view === 'mine' && a.receptionistId === myReceptionistId);
         const matchesStatus =
             statusFilter.length === 0 ||
             statusFilter.includes(a.appointmentStatus);
@@ -132,6 +145,15 @@ const ReceptionistAppointments = () => {
                             ]}
                             value={view}
                             onChange={v => setView(v as 'all' | 'mine')}
+                        />
+
+                        <Input.Search
+                            allowClear
+                            placeholder="Search walk-in patient"
+                            style={{ minWidth: 220 }}
+                            value={walkInPatientNameInput}
+                            onChange={(e) => setWalkInPatientNameInput(e.target.value)}
+                            onSearch={(value) => setWalkInPatientNameFilter(value)}
                         />
 
                         {/* Status filter */}

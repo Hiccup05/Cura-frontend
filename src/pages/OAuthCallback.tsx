@@ -12,7 +12,7 @@ const OAuthCallback = () => {
 
                 if (roles.includes('ROLE_ADMIN')) navigate('/admin/overview');
                 else if (roles.includes('ROLE_PATIENT')) navigate('/patient/profile');
-                else if (roles.includes('ROLE_RECEPTIONIST')) navigate('/receptionist/book');
+                else if (roles.includes('ROLE_RECEPTIONIST')) navigate('/receptionist/home');
                 else if (roles.includes('ROLE_DOCTOR')) navigate('/doctor/profile');
                 else navigate('/login');
             })
